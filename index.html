@@ -53,12 +53,10 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <!-- Analytics Counter Badge -->
                 <div class="hidden sm:flex items-center gap-2 bg-white/80 border border-butter-dark px-3.5 py-2 rounded-full text-xs font-semibold text-burgundy shadow-inner">
                     <i class="fa-solid fa-chart-line text-burgundy"></i>
                     <span>Visitas: <strong id="visit-count">1,248</strong></span>
                 </div>
-                <!-- Cart Trigger Button -->
                 <button onclick="toggleCart()" class="relative flex items-center gap-2 bg-burgundy text-butter px-5 py-2.5 rounded-full font-medium shadow-md hover:bg-burgundy-light transition-all">
                     <i class="fa-solid fa-bag-shopping"></i>
                     <span id="cart-total-price" class="text-sm font-semibold">$0.00</span>
@@ -74,7 +72,7 @@
             <div class="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-burgundy-light opacity-30 blur-2xl pointer-events-none"></div>
             <div class="max-w-xl relative z-10">
                 <span class="inline-block text-xs uppercase tracking-[0.3em] bg-butter/15 text-butter px-3.5 py-1.5 rounded-full mb-4 font-semibold border border-butter/20">
-                    Colección Exclusiva · Fotos Reales
+                    Catálogo Oficial · Fotos Reales
                 </span>
                 <h1 class="text-3xl sm:text-5xl font-light tracking-wide mb-4 leading-tight">
                     Colección Exclusiva <br/><strong class="font-bold">Bruma Moda para Dama</strong>
@@ -116,7 +114,6 @@
                 <h2 class="text-2xl font-bold tracking-tight text-burgundy">Catálogo Disponible</h2>
                 <p class="text-xs text-burgundy/70 mt-0.5">Selecciona tu talla y agrega tus piezas favoritas al carrito.</p>
             </div>
-            <!-- Search & Filters -->
             <div class="flex flex-wrap items-center gap-3">
                 <div class="relative flex-1 sm:w-80">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-burgundy/40 text-sm"></i>
@@ -131,7 +128,6 @@
             </div>
         </div>
 
-        <!-- Product Grid -->
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <!-- Populated via JavaScript -->
         </div>
@@ -177,7 +173,6 @@
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
         <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
             <div class="w-screen max-w-md bg-butter border-l border-butter-dark shadow-2xl flex flex-col">
-                <!-- Cart Header -->
                 <div class="bg-burgundy text-butter px-6 py-5 flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-bag-shopping text-lg"></i>
@@ -187,13 +182,8 @@
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
-                <!-- Cart Items List -->
-                <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4">
-                    <!-- Dynamic Cart Items -->
-                </div>
-                <!-- Cart Footer -->
+                <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
                 <div class="bg-white border-t border-butter-dark p-6 space-y-4 shadow-lg">
-                    <!-- Coupon Section -->
                     <div class="flex gap-2">
                         <input type="text" id="coupon-input" placeholder="Cupón VIP (ej. BRUMAVIP)" class="flex-1 bg-butter border border-butter-dark rounded-xl px-3 py-2 text-xs uppercase font-semibold text-burgundy-dark focus:outline-none focus:ring-2 focus:ring-burgundy/50">
                         <button onclick="applyCoupon()" class="bg-burgundy text-butter px-4 py-2 rounded-xl text-xs font-bold uppercase hover:bg-burgundy-light transition-all">Aplicar</button>
@@ -247,14 +237,12 @@
                 </div>
 
                 <div class="space-y-6">
-                    <!-- 1. Dynamic Inventory Import -->
                     <div class="bg-white p-5 rounded-2xl border border-butter-dark shadow-sm">
                         <h4 class="font-bold text-sm text-burgundy mb-2"><i class="fa-solid fa-file-excel mr-2 text-emerald-600"></i> Carga Dinámica de Inventario (Excel / CSV)</h4>
                         <p class="text-xs text-burgundy/70 mb-3">Sube tu archivo CSV o Excel exportado para actualizar precios y stock automáticamente.</p>
                         <input type="file" id="csv-file-input" accept=".csv, .xlsx" class="block w-full text-xs text-burgundy file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-burgundy file:text-butter hover:file:bg-burgundy-light cursor-pointer">
                     </div>
 
-                    <!-- 2. Analytics Overview -->
                     <div class="bg-white p-5 rounded-2xl border border-butter-dark shadow-sm">
                         <h4 class="font-bold text-sm text-burgundy mb-3"><i class="fa-solid fa-chart-pie mr-2 text-burgundy"></i> Analítica de Tráfico y Canales de Conversión</h4>
                         <div class="grid grid-cols-3 gap-3 text-center">
@@ -273,7 +261,6 @@
                         </div>
                     </div>
 
-                    <!-- 3. PDF Sales Reports -->
                     <div class="bg-white p-5 rounded-2xl border border-butter-dark shadow-sm">
                         <h4 class="font-bold text-sm text-burgundy mb-2"><i class="fa-solid fa-file-pdf mr-2 text-red-600"></i> Descarga de Reportes de Ventas en PDF</h4>
                         <p class="text-xs text-burgundy/70 mb-3">Genera el reporte consolidado de cierres de caja con filtros de fecha.</p>
@@ -293,7 +280,7 @@
         </div>
     </div>
 
-    <!-- Application JavaScript Logic -->
+    <!-- Application JavaScript Logic with Parenthesized Suffixes -->
     <script>
         let products = [
             {
@@ -314,7 +301,7 @@
                 price: 70,
                 salesCount: 15,
                 stock: { "6": 0, "8": 2, "10": 3, "12": 2, "14": 0, "Única": 0 },
-                images: ["DSC01435.jpg", "DSC01442.jpg", "DSC01446.jpg"]
+                images: ["SS-CAF-02.jpg", "SS-CAF-02 (2).jpg", "SS-CAF-02 (3).jpg"]
             },
             {
                 code: "SS-BLA-03",
@@ -324,7 +311,7 @@
                 price: 100,
                 salesCount: 24,
                 stock: { "6": 0, "8": 2, "10": 3, "12": 2, "14": 0, "Única": 0 },
-                images: ["ss-caf-03.jpeg"]
+                images: ["SS-BLA-03.jpg", "SS-BLA-03 (2).jpg", "SS-BLA-03 (3).jpg"]
             },
             {
                 code: "SS-NEG-04",
@@ -334,7 +321,7 @@
                 price: 70,
                 salesCount: 11,
                 stock: { "6": 2, "8": 2, "10": 2, "12": 2, "14": 0, "Única": 0 },
-                images: ["DSC01330.jpg", "DSC01333.jpg", "DSC01343.jpg"]
+                images: ["SS-NEG-04.jpg", "SS-NEG-04 (2).jpg", "SS-NEG-04 (3).jpg"]
             },
             {
                 code: "SS-CAQ-05",
@@ -344,7 +331,7 @@
                 price: 70,
                 salesCount: 8,
                 stock: { "6": 0, "8": 2, "10": 3, "12": 2, "14": 0, "Única": 0 },
-                images: ["DSC01451.jpg", "DSC01454.jpg", "DSC01456.jpg"]
+                images: ["SS-CAQ-05.jpg", "SS-CAQ-05 (2).jpg", "SS-CAQ-05 (3).jpg"]
             },
             {
                 code: "SS-JEA-06",
@@ -354,7 +341,7 @@
                 price: 100,
                 salesCount: 22,
                 stock: { "6": 0, "8": 2, "10": 3, "12": 2, "14": 0, "Única": 0 },
-                images: ["DSC01282.jpg", "DSC01283.jpg", "DSC01286.jpg"]
+                images: ["SS-JEA-06.jpg", "SS-JEA-06 (2).jpg", "SS-JEA-06 (3).jpg"]
             },
             {
                 code: "SS-GRI-07",
@@ -364,7 +351,7 @@
                 price: 70,
                 salesCount: 6,
                 stock: { "6": 0, "8": 2, "10": 2, "12": 2, "14": 1, "Única": 0 },
-                images: ["DSC01390.jpg", "DSC01394.jpg", "DSC01398.jpg"]
+                images: ["SS-GRI-07.jpg", "SS-GRI-07 (2).jpg", "SS-GRI-07 (3).jpg"]
             },
             {
                 code: "SS-JEA-08",
@@ -374,7 +361,7 @@
                 price: 70,
                 salesCount: 14,
                 stock: { "6": 0, "8": 2, "10": 2, "12": 2, "14": 1, "Única": 0 },
-                images: ["DSC01311.jpg", "DSC01318.jpg", "DSC01322.jpg"]
+                images: ["SS-JEA-08.jpg", "SS-JEA-08 (2).jpg", "SS-JEA-08 (3).jpg"]
             },
             {
                 code: "SS-CAQ-09",
@@ -384,7 +371,7 @@
                 price: 70,
                 salesCount: 9,
                 stock: { "6": 0, "8": 2, "10": 3, "12": 2, "14": 0, "Única": 0 },
-                images: ["DSC01382.jpg", "DSC01383.jpg", "DSC01388.jpg"]
+                images: ["SS-CAQ-09.jpg", "SS-CAQ-09 (2).jpg", "SS-CAQ-09 (3).jpg"]
             },
             {
                 code: "SS-CAF-10",
@@ -394,7 +381,7 @@
                 price: 60,
                 salesCount: 12,
                 stock: { "6": 0, "8": 1, "10": 2, "12": 2, "14": 1, "Única": 0 },
-                images: ["DSC01352.jpg", "DSC01359.jpg", "DSC01363.jpg"]
+                images: ["SS-CAF-10.jpg", "SS-CAF-10 (2).jpg", "SS-CAF-10 (3).jpg"]
             },
             {
                 code: "SS-CAF-11",
@@ -404,7 +391,7 @@
                 price: 100,
                 salesCount: 27,
                 stock: { "6": 0, "8": 2, "10": 2, "12": 2, "14": 1, "Única": 0 },
-                images: ["DSC01257.jpg", "DSC01261.jpg", "DSC01264.jpg"]
+                images: ["SS-CAF-11.jpg", "SS-CAF-11 (2).jpg", "SS-CAF-11 (3).jpg"]
             },
             {
                 code: "SS-GRI-12",
@@ -414,7 +401,7 @@
                 price: 70,
                 salesCount: 10,
                 stock: { "6": 0, "8": 2, "10": 2, "12": 2, "14": 1, "Única": 0 },
-                images: ["DSC01418.jpg", "DSC01422.jpg", "DSC01429.jpg"]
+                images: ["SS-GRI-12.jpg", "SS-GRI-12 (2).jpg", "SS-GRI-12 (3).jpg"]
             },
             {
                 code: "SS-CAF-13",
@@ -424,7 +411,7 @@
                 price: 70,
                 salesCount: 13,
                 stock: { "6": 0, "8": 2, "10": 2, "12": 2, "14": 1, "Única": 0 },
-                images: ["DSC01368.jpg", "DSC01370.jpg", "DSC01378.jpg"]
+                images: ["SS-CAF-13.jpg", "SS-CAF-13 (2).jpg", "SS-CAF-13 (3).jpg"]
             },
             {
                 code: "SS-BLA-14",
@@ -434,7 +421,7 @@
                 price: 60,
                 salesCount: 16,
                 stock: { "6": 0, "8": 2, "10": 2, "12": 2, "14": 0, "Única": 0 },
-                images: ["DSC01408.jpg", "DSC01414.jpg", "DSC01417.jpg"]
+                images: ["SS-BLA-14.jpg", "SS-BLA-14 (2).jpg", "SS-BLA-14 (3).jpg"]
             }
         ];
 
@@ -717,8 +704,7 @@
 
             if (activeDiscount > 0) {
                 message += `*Subtotal:* $${subtotal}.00\n`;
-                message += `*Descuento VIP:* -$${discountAmount.toFixed(2)}
-`;
+                message += `*Descuento VIP:* -$${discountAmount.toFixed(2)}\n`;
             }
             message += `*Total a Pagar:* $${finalTotal.toFixed(2)}\n`;
             message += `*Método de Pago:* ${paymentMethod}\n\n`;
