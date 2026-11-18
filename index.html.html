@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BRUMA · Colección Exclusiva (@bruma_ccs)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            burgundy: '#5C0A1E',
+            'burgundy-dark': '#400614',
+            'burgundy-light': '#7A122B',
+            butter: '#FDF3C7',
+            'butter-light': '#FEF9E3',
+            'butter-dark': '#F5E49E',
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <!-- FontAwesome & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- SheetJS for Excel/CSV Import & Template Export -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <!-- jsPDF for Sales Reports -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-editorial { font-family: 'Cormorant Garamond', Georgia, serif; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.25s ease-out forwards; }
+  </style>
+</head>
+<body class="bg-butter text-burgundy-dark antialiased min-h-screen flex flex-col justify-between selection:bg-burgundy selection:text-butter">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-burgundy text-butter text-[11px] sm:text-xs tracking-widest text-center py-2.5 px-4 font-medium uppercase border-b border-burgundy-light flex items-center justify-center gap-3 flex-wrap">
+    <span><i class="fa-solid fa-truck-fast mr-1.5"></i>Delivery Gratis en Caracas · 14 Referencias Oficiales · Pago Móvil, Zelle, Binance & Efectivo</span>
+    <button onclick="openAdminModal()" class="bg-butter/15 hover:bg-butter/25 px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border border-butter/30 transition-all cursor-pointer">
+      <i class="fa-solid fa-lock mr-1"></i> Panel Admin
+    </button>
+  </div>
+
+  <!-- Main Sticky Header -->
+  <header class="sticky top-0 z-40 bg-butter/95 backdrop-blur-md border-b border-butter-dark shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="#" class="font-editorial text-3xl sm:text-4xl font-bold tracking-[0.25em] text-burgundy hover:opacity-80 transition-opacity">
+          BRUMA
+        </a>
+        <span class="hidden md:inline-block text-[11px] uppercase tracking-[0.2em] text-burgundy/70 border-l border-burgundy/25 pl-4">
+          Caracas · Moda para Dama
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <!-- Shop the Look Button -->
+        <button onclick="openLookModal()" class="hidden sm:flex items-center gap-2 bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Shop The Look</span>
+        </button>
+
+        <!-- Cart Trigger Button -->
+        <button onclick="toggleCart()" class="relative flex items-center gap-2.5 bg-burgundy text-butter px-4 sm:px-5 py-2.5 rounded-full font-medium shadow-md hover:bg-burgundy-light transition-all cursor-pointer">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span id="cart-total-price" class="text-sm font-semibold">$0.00</span>
+          <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-butter text-burgundy text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold shadow border-2 border-burgundy">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Editorial Hero Banner -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-7 pb-4">
+    <div class="bg-burgundy text-butter rounded-3xl p-7 sm:p-12 relative overflow-hidden shadow-xl border border-burgundy-light">
+      <div class="absolute -right-16 -bottom-16 w-80 h-80 rounded-full bg-burgundy-light opacity-35 blur-3xl pointer-events-none"></div>
+      <div class="max-w-2xl relative z-10">
+        <span class="inline-block text-[11px] uppercase tracking-[0.28em] bg-butter/15 text-butter px-3.5 py-1.5 rounded-full mb-4 font-semibold border border-butter/25">
+          Colección Oficial · Catálogo Fotográfico Real
+        </span>
+        <h1 class="font-editorial text-4xl sm:text-6xl font-semibold tracking-wide mb-4 leading-[1.08]">
+          Esencia Urbana &amp; <span class="italic font-normal text-butter-dark">Siluetas con Carácter</span>
+        </h1>
+        <p class="text-butter/90 text-sm sm:text-base font-light mb-7 leading-relaxed max-w-xl">
+          Piezas seleccionadas de <strong class="font-semibold">@bruma_ccs</strong>. Cortes bagui, sets estructurados y palazos con acabado superior. <strong class="font-semibold underline decoration-butter/50 underline-offset-4">Delivery gratis en toda Caracas.</strong>
+        </p>
+        <div class="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-wider">
+          <a href="#catalogo" class="bg-butter text-burgundy px-6 py-3.5 rounded-full hover:bg-butter-light transition-all shadow-md flex items-center gap-2">
+            <i class="fa-solid fa-table-cells-large"></i> Explorar Colección (14)
+          </a>
+          <button onclick="openLookModal()" class="sm:hidden border border-butter/40 text-butter px-5 py-3.5 rounded-full hover:bg-butter/10 transition-all flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Shop The Look
+          </button>
+          <a href="https://wa.me/584241325811" target="_blank" onclick="trackEvent('whatsappClicks')" class="border border-butter/40 text-butter px-6 py-3.5 rounded-full hover:bg-butter/10 transition-all flex items-center gap-2">
+            <i class="fa-brands fa-whatsapp text-base"></i> Atención Directa
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top 3 Best Sellers Section (Dynamic) -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+    <div class="bg-butter-light rounded-3xl p-5 sm:p-6 shadow-sm border border-burgundy/15">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div>
+          <span class="text-[10px] uppercase tracking-[0.25em] text-burgundy/60 font-bold block">Tendencia en Caracas</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-burgundy flex items-center gap-2">
+            <i class="fa-solid fa-crown text-burgundy text-lg"></i> Top 3 Más Vendidos
+          </h2>
+        </div>
+        <span class="text-xs text-burgundy bg-butter px-3.5 py-1.5 rounded-full font-semibold border border-burgundy/15">
+          Actualizado en tiempo real
+        </span>
+      </div>
+      <div id="top3-container" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Catalog Section -->
+  <main id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-7 pb-5 border-b border-burgundy/15">
+      <div>
+        <span class="text-[11px] uppercase tracking-[0.25em] text-burgundy/60 font-semibold">Inventario Verificado</span>
+        <h2 class="font-editorial text-3xl sm:text-4xl font-bold text-burgundy mt-0.5">Catálogo Disponible</h2>
+        <p class="text-xs text-burgundy/75 mt-1">Toca cualquier foto para ampliar en alta resolución o desliza el carrusel de cada modelo.</p>
+      </div>
+
+      <!-- Search & Category Filters -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div class="relative sm:w-72">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-burgundy/40 text-xs"></i>
+          <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Código, modelo o color..." class="w-full bg-butter-light border border-burgundy/20 rounded-full pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-burgundy/40 text-burgundy-dark placeholder-burgundy/40">
+        </div>
+        <div class="flex gap-1.5 overflow-x-auto hide-scrollbar pb-1 sm:pb-0">
+          <button onclick="setCategoryFilter('ALL')" data-cat="ALL" class="cat-btn bg-burgundy text-butter text-xs px-4 py-2.5 rounded-full font-semibold transition-all shadow-sm cursor-pointer">Todos (14)</button>
+          <button onclick="setCategoryFilter('BAGUI')" data-cat="BAGUI" class="cat-btn bg-butter-light text-burgundy border border-burgundy/20 text-xs px-4 py-2.5 rounded-full font-semibold hover:bg-white transition-all cursor-pointer">Baguis</button>
+          <button onclick="setCategoryFilter('SET')" data-cat="SET" class="cat-btn bg-butter-light text-burgundy border border-burgundy/20 text-xs px-4 py-2.5 rounded-full font-semibold hover:bg-white transition-all cursor-pointer">Sets</button>
+          <button onclick="setCategoryFilter('PALAZO')" data-cat="PALAZO" class="cat-btn bg-butter-light text-burgundy border border-burgundy/20 text-xs px-4 py-2.5 rounded-full font-semibold hover:bg-white transition-all cursor-pointer">Palazos</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- Populated via JavaScript -->
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-burgundy text-butter mt-16 border-t border-burgundy-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 border-b border-burgundy-light pb-10">
+        <div>
+          <h3 class="font-editorial text-3xl font-bold tracking-[0.25em] mb-3">BRUMA</h3>
+          <p class="text-xs text-butter/80 leading-relaxed max-w-xs">
+            Boutique digital en Caracas, Venezuela. Diseños exclusivos con fotografía real de estudio, stock actualizado y entrega gratuita en toda la ciudad.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.2em] mb-3 text-butter-dark">Contacto &amp; Redes</h4>
+          <ul class="text-xs text-butter/85 space-y-2.5">
+            <li><i class="fa-solid fa-location-dot mr-2 text-butter-dark"></i> Caracas, Venezuela (Delivery Gratis)</li>
+            <li><i class="fa-brands fa-instagram mr-2 text-butter-dark"></i> <a href="https://instagram.com/bruma_ccs" target="_blank" onclick="trackEvent('instagramClicks')" class="underline underline-offset-4 hover:text-butter">@bruma_ccs</a></li>
+            <li><i class="fa-brands fa-whatsapp mr-2 text-butter-dark"></i> <a href="https://wa.me/584241325811" target="_blank" onclick="trackEvent('whatsappClicks')" class="underline underline-offset-4 hover:text-butter">+58 424-1325811</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-[0.2em] mb-3 text-butter-dark">Métodos de Pago Aceptados</h4>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <span class="bg-butter/15 text-butter px-3 py-1.5 rounded-full border border-butter/25">Pago Móvil</span>
+            <span class="bg-butter/15 text-butter px-3 py-1.5 rounded-full border border-butter/25">Zelle</span>
+            <span class="bg-butter/15 text-butter px-3 py-1.5 rounded-full border border-butter/25">Binance Pay (USDT)</span>
+            <span class="bg-butter/15 text-butter px-3 py-1.5 rounded-full border border-butter/25">Efectivo ($)</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-butter/75">
+        <p>&copy; 2026 BRUMA (@bruma_ccs). Todos los derechos reservados.</p>
+        <button onclick="openAdminModal()" class="text-butter/75 hover:text-butter underline underline-offset-4 cursor-pointer">
+          Acceso Administrativo
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Fullscreen Photo Lightbox Modal -->
+  <div id="lightbox-modal" class="fixed inset-0 z-50 hidden bg-burgundy-dark/95 backdrop-blur-md flex items-center justify-center p-4">
+    <button onclick="closeLightbox()" class="absolute top-5 right-5 w-11 h-11 rounded-full bg-butter text-burgundy flex items-center justify-center text-lg shadow-lg hover:scale-105 transition-transform cursor-pointer z-20">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <button id="lb-prev" onclick="navigateLightbox(-1)" class="absolute left-4 sm:left-8 w-11 h-11 rounded-full bg-butter/90 text-burgundy flex items-center justify-center shadow-lg hover:bg-butter transition-all cursor-pointer z-20">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <div class="max-w-3xl w-full flex flex-col items-center">
+      <img id="lb-img" src="" alt="Vista ampliada" class="max-h-[78vh] w-auto rounded-2xl shadow-2xl border-2 border-butter/30 object-contain bg-burgundy">
+      <div class="mt-4 text-center text-butter">
+        <p id="lb-title" class="font-editorial text-2xl font-bold"></p>
+        <p id="lb-counter" class="text-xs uppercase tracking-widest text-butter/75 mt-1"></p>
+      </div>
+    </div>
+    <button id="lb-next" onclick="navigateLightbox(1)" class="absolute right-4 sm:right-8 w-11 h-11 rounded-full bg-butter/90 text-burgundy flex items-center justify-center shadow-lg hover:bg-butter transition-all cursor-pointer z-20">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+  </div>
+
+  <!-- Shop The Look Modal -->
+  <div id="look-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="fixed inset-0 bg-burgundy-dark/75 backdrop-blur-sm" onclick="closeLookModal()"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-butter border border-burgundy/20 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl animate-fade-in">
+        <div class="flex items-center justify-between pb-4 border-b border-burgundy/15">
+          <div>
+            <span class="text-[10px] uppercase tracking-[0.25em] text-burgundy/60 font-bold">Estilismo Curado BRUMA</span>
+            <h3 class="font-editorial text-3xl font-bold text-burgundy">Shop The Look · Cápsulas Combinables</h3>
+          </div>
+          <button onclick="closeLookModal()" class="w-9 h-9 rounded-full bg-burgundy/10 text-burgundy hover:bg-burgundy hover:text-butter flex items-center justify-center transition-colors cursor-pointer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div id="look-bundles-container" class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide-Over Shopping Bag & Express WhatsApp Checkout -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 hidden overflow-hidden">
+    <div class="absolute inset-0 bg-burgundy-dark/70 backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
+    <div class="absolute inset-y-0 right-0 max-w-full flex pl-6 sm:pl-10">
+      <div class="w-screen max-w-md bg-butter border-l border-burgundy/20 shadow-2xl flex flex-col">
+        <!-- Cart Header -->
+        <div class="bg-burgundy text-butter px-6 py-5 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <i class="fa-solid fa-bag-shopping text-butter-dark"></i>
+            <h3 class="font-editorial text-2xl font-bold tracking-wide">Tu Bolsa BRUMA</h3>
+          </div>
+          <button onclick="toggleCart()" class="w-8 h-8 rounded-full bg-butter/15 hover:bg-butter/25 flex items-center justify-center text-butter cursor-pointer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Cart Body -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-5">
+          <div id="cart-items-list" class="space-y-3">
+            <!-- Cart items rendered here -->
+          </div>
+
+          <!-- VIP Coupon Box -->
+          <div id="cart-checkout-fields" class="hidden space-y-4 pt-4 border-t border-burgundy/15">
+            <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15">
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-burgundy mb-2">
+                <i class="fa-solid fa-ticket mr-1"></i> Cupón VIP (Un solo uso)
+              </label>
+              <div class="flex gap-2">
+                <input type="text" id="coupon-input" placeholder="Ej: BRUMAVIP10" class="flex-1 bg-white border border-burgundy/20 rounded-xl px-3.5 py-2 text-xs uppercase font-semibold text-burgundy focus:outline-none focus:ring-2 focus:ring-burgundy/40">
+                <button onclick="applyCoupon()" class="bg-burgundy text-butter px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-burgundy-light transition-all cursor-pointer">
+                  Aplicar
+                </button>
+              </div>
+              <p id="coupon-feedback" class="text-[11px] mt-1.5 font-medium"></p>
+            </div>
+
+            <!-- Customer & Delivery Details -->
+            <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15 space-y-3">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-burgundy">Datos para Delivery Gratis (Caracas)</h4>
+              <input type="text" id="cust-name" placeholder="Nombre y Apellido *" class="w-full bg-white border border-burgundy/20 rounded-xl px-3.5 py-2.5 text-xs text-burgundy-dark focus:outline-none focus:ring-2 focus:ring-burgundy/40">
+              <input type="tel" id="cust-phone" placeholder="Teléfono WhatsApp (Ej: 0414-0000000) *" class="w-full bg-white border border-burgundy/20 rounded-xl px-3.5 py-2.5 text-xs text-burgundy-dark focus:outline-none focus:ring-2 focus:ring-burgundy/40">
+              <input type="text" id="cust-address" placeholder="Zona / Dirección exacta en Caracas *" class="w-full bg-white border border-burgundy/20 rounded-xl px-3.5 py-2.5 text-xs text-burgundy-dark focus:outline-none focus:ring-2 focus:ring-burgundy/40">
+              
+              <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-burgundy mb-1.5">Método de Pago *</label>
+                <select id="cust-payment" onchange="updatePaymentHint()" class="w-full bg-white border border-burgundy/20 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-burgundy focus:outline-none focus:ring-2 focus:ring-burgundy/40">
+                  <option value="Pago Móvil">Pago Móvil (Tasa BCV del día)</option>
+                  <option value="Zelle">Zelle ($ USD)</option>
+                  <option value="Binance Pay (USDT)">Binance Pay (USDT)</option>
+                  <option value="Efectivo ($)">Efectivo ($ en entrega)</option>
+                </select>
+                <p id="payment-hint" class="text-[11px] text-burgundy/75 mt-1.5 bg-butter px-3 py-2 rounded-lg border border-burgundy/10">
+                  Recibirás los datos bancarios oficiales al confirmar tu pedido por WhatsApp.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cart Footer Summary -->
+        <div id="cart-footer" class="hidden bg-butter-light border-t border-burgundy/15 p-6 space-y-3">
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between text-burgundy/80">
+              <span>Subtotal</span>
+              <span id="summary-subtotal" class="font-semibold">$0.00</span>
+            </div>
+            <div id="summary-discount-row" class="hidden flex justify-between text-burgundy font-semibold">
+              <span>Descuento VIP (<span id="summary-coupon-code"></span>)</span>
+              <span id="summary-discount">-$0.00</span>
+            </div>
+            <div class="flex justify-between text-burgundy/80">
+              <span>Delivery Caracas</span>
+              <span class="font-bold uppercase text-[11px] bg-butter px-2 py-0.5 rounded border border-burgundy/15">Gratis</span>
+            </div>
+            <div class="flex justify-between text-base font-bold text-burgundy pt-2 border-t border-burgundy/15">
+              <span>Total a Pagar</span>
+              <span id="summary-total">$0.00</span>
+            </div>
+          </div>
+          <button onclick="checkoutWhatsApp()" class="w-full bg-burgundy text-butter py-3.5 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-burgundy-light transition-all flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-brands fa-whatsapp text-base"></i> Confirmar Pedido por WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password-Protected Admin Dashboard Modal -->
+  <div id="admin-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="fixed inset-0 bg-burgundy-dark/80 backdrop-blur-sm" onclick="closeAdminModal()"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-3 sm:p-6">
+      <div class="relative bg-butter border border-burgundy/25 rounded-3xl max-w-6xl w-full shadow-2xl overflow-hidden animate-fade-in">
+        <!-- Admin Top Header -->
+        <div class="bg-burgundy text-butter px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="font-editorial text-2xl font-bold tracking-widest">BRUMA</span>
+            <span class="text-[11px] uppercase tracking-widest bg-butter/15 px-3 py-1 rounded-full border border-butter/25">Panel de Control</span>
+          </div>
+          <button onclick="closeAdminModal()" class="w-9 h-9 rounded-full bg-butter/15 hover:bg-butter/25 flex items-center justify-center text-butter cursor-pointer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="admin-login-view" class="p-8 sm:p-12 max-w-md mx-auto text-center space-y-5">
+          <div class="w-14 h-14 rounded-full bg-burgundy text-butter flex items-center justify-center mx-auto text-xl shadow-md">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <h3 class="font-editorial text-3xl font-bold text-burgundy">Acceso Restringido</h3>
+            <p class="text-xs text-burgundy/75 mt-1">Ingresa la clave administrativa de BRUMA para gestionar inventario, cupones y reportes.</p>
+          </div>
+          <input type="password" id="admin-password-input" onkeydown="if(event.key==='Enter') verifyAdminPassword()" placeholder="Contraseña administrativa" class="w-full bg-white border border-burgundy/25 rounded-full px-5 py-3 text-sm text-center text-burgundy focus:outline-none focus:ring-2 focus:ring-burgundy">
+          <p id="admin-login-error" class="text-xs text-burgundy font-semibold hidden">Contraseña incorrecta. Intenta nuevamente.</p>
+          <button onclick="verifyAdminPassword()" class="w-full bg-burgundy text-butter py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-burgundy-light transition-all shadow cursor-pointer">
+            Ingresar al Panel
+          </button>
+        </div>
+
+        <!-- Authenticated Admin Workspace -->
+        <div id="admin-dashboard-view" class="hidden p-5 sm:p-7 space-y-6 max-h-[82vh] overflow-y-auto">
+          <!-- Navigation Tabs -->
+          <div class="flex flex-wrap gap-2 border-b border-burgundy/15 pb-4">
+            <button onclick="switchAdminTab('inventory')" id="tab-btn-inventory" class="admin-tab-btn bg-burgundy text-butter px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
+              <i class="fa-solid fa-boxes-stacked mr-1.5"></i> Inventario &amp; Excel
+            </button>
+            <button onclick="switchAdminTab('coupons')" id="tab-btn-coupons" class="admin-tab-btn bg-butter-light text-burgundy border border-burgundy/20 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
+              <i class="fa-solid fa-ticket mr-1.5"></i> Cupones VIP
+            </button>
+            <button onclick="switchAdminTab('analytics')" id="tab-btn-analytics" class="admin-tab-btn bg-butter-light text-burgundy border border-burgundy/20 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
+              <i class="fa-solid fa-chart-pie mr-1.5"></i> Analíticas &amp; Top 3
+            </button>
+            <button onclick="switchAdminTab('reports')" id="tab-btn-reports" class="admin-tab-btn bg-butter-light text-burgundy border border-burgundy/20 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
+              <i class="fa-solid fa-file-pdf mr-1.5"></i> Reportes PDF
+            </button>
+          </div>
+
+          <!-- TAB 1: INVENTORY & EXCEL LOADER -->
+          <div id="admin-tab-inventory" class="space-y-5">
+            <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h4 class="text-sm font-bold text-burgundy">Actualización Masiva desde Hoja de Cálculo (.xlsx / .csv)</h4>
+                <p class="text-xs text-burgundy/75 mt-0.5">Sube tu inventario actualizado para sincronizar tallas y precios manteniendo las fotos reales de Google Drive.</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button onclick="downloadExcelTemplate()" class="bg-butter border border-burgundy/30 text-burgundy hover:bg-burgundy hover:text-butter px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer">
+                  <i class="fa-solid fa-download mr-1"></i> Plantilla Excel
+                </button>
+                <label class="bg-burgundy text-butter hover:bg-burgundy-light px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer shadow-sm">
+                  <i class="fa-solid fa-file-excel mr-1"></i> Cargar Excel / CSV
+                  <input type="file" accept=".xlsx,.xls,.csv" onchange="handleSpreadsheetUpload(event)" class="hidden">
+                </label>
+                <button onclick="resetDefaultInventory()" class="text-xs text-burgundy/70 hover:text-burgundy underline px-2 py-1 cursor-pointer">
+                  Restaurar Original
+                </button>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto bg-white rounded-2xl border border-burgundy/15 shadow-sm">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-burgundy text-butter uppercase tracking-wider text-[11px]">
+                    <th class="p-3">Foto</th>
+                    <th class="p-3">Código</th>
+                    <th class="p-3">Descripción</th>
+                    <th class="p-3">Color</th>
+                    <th class="p-3 text-center">T6</th>
+                    <th class="p-3 text-center">T8</th>
+                    <th class="p-3 text-center">T10</th>
+                    <th class="p-3 text-center">T12</th>
+                    <th class="p-3 text-center">T14</th>
+                    <th class="p-3 text-center">Total</th>
+                    <th class="p-3 text-right">Precio ($)</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-inventory-tbody" class="divide-y divide-burgundy/10">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 2: SINGLE-USE VIP COUPONS -->
+          <div id="admin-tab-coupons" class="hidden space-y-5">
+            <div class="bg-butter-light p-5 rounded-2xl border border-burgundy/15">
+              <h4 class="text-sm font-bold text-burgundy mb-3">Crear Nuevo Cupón de Un Solo Uso</h4>
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                <input type="text" id="new-coupon-code" placeholder="Código (Ej: VIPBRUMA15)" class="bg-white border border-burgundy/20 rounded-xl px-3.5 py-2.5 text-xs uppercase font-bold text-burgundy">
+                <select id="new-coupon-type" class="bg-white border border-burgundy/20 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-burgundy">
+                  <option value="percent">Porcentaje (%)</option>
+                  <option value="fixed">Monto Fijo ($ USD)</option>
+                </select>
+                <input type="number" id="new-coupon-value" placeholder="Valor (Ej: 15)" min="1" class="bg-white border border-burgundy/20 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-burgundy">
+                <button onclick="createCoupon()" class="bg-burgundy text-butter rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-burgundy-light transition-all cursor-pointer">
+                  + Generar Cupón
+                </button>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto bg-white rounded-2xl border border-burgundy/15">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-burgundy text-butter uppercase text-[11px]">
+                    <th class="p-3">Código</th>
+                    <th class="p-3">Descuento</th>
+                    <th class="p-3">Estado</th>
+                    <th class="p-3">Canjeado Por</th>
+                    <th class="p-3 text-right">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-coupons-tbody" class="divide-y divide-burgundy/10">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 3: ANALYTICS & TOP 3 -->
+          <div id="admin-tab-analytics" class="hidden space-y-6">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="admin-kpi-cards">
+              <!-- KPIs rendered via JS -->
+            </div>
+            <div class="bg-butter-light p-5 rounded-2xl border border-burgundy/15">
+              <h4 class="text-sm font-bold text-burgundy mb-3">Ranking de Ventas por Referencia (Top 3 Destacados)</h4>
+              <div id="admin-top3-list" class="space-y-2.5"></div>
+            </div>
+          </div>
+
+          <!-- TAB 4: PDF SALES REPORTS -->
+          <div id="admin-tab-reports" class="hidden space-y-5">
+            <div class="bg-butter-light p-5 rounded-2xl border border-burgundy/15 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div class="flex flex-wrap items-end gap-3">
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-burgundy mb-1">Desde</label>
+                  <input type="date" id="report-start-date" onchange="renderOrdersTable()" class="bg-white border border-burgundy/20 rounded-xl px-3.5 py-2 text-xs text-burgundy">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-burgundy mb-1">Hasta</label>
+                  <input type="date" id="report-end-date" onchange="renderOrdersTable()" class="bg-white border border-burgundy/20 rounded-xl px-3.5 py-2 text-xs text-burgundy">
+                </div>
+              </div>
+              <button onclick="exportSalesPDF()" class="bg-burgundy text-butter px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-burgundy-light transition-all shadow cursor-pointer flex items-center gap-2">
+                <i class="fa-solid fa-file-arrow-down"></i> Descargar Reporte PDF
+              </button>
+            </div>
+
+            <div class="overflow-x-auto bg-white rounded-2xl border border-burgundy/15">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-burgundy text-butter uppercase text-[11px]">
+                    <th class="p-3">Fecha</th>
+                    <th class="p-3">Cliente</th>
+                    <th class="p-3">Prendas</th>
+                    <th class="p-3">Método Pago</th>
+                    <th class="p-3">Cupón</th>
+                    <th class="p-3 text-right">Total ($)</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-orders-tbody" class="divide-y divide-burgundy/10">
+                  <!-- Orders rendered via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-burgundy text-butter px-5 py-3 rounded-2xl shadow-2xl border border-butter/25 text-xs font-semibold flex items-center gap-2.5 animate-fade-in">
+    <i class="fa-solid fa-circle-check text-butter-dark"></i>
+    <span id="toast-msg"></span>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. REAL GOOGLE DRIVE PHOTO MAPPING (FROM FOLDER "BRUMA FOTOS")
+    // =========================================================================
+    const DRIVE_PHOTO_IDS = {
+      'SS-ROS-01': ['1XwJFX0LvPe8XSDv1Nos1TMk5bWg_X9QJ', '1E5iGkW2q7P_k5dbfVAl5Xr25ei4Fm7xs', '1XwMRUSPe76643PuDM57eXZP3_GOtzvX0'],
+      'SS-CAF-02': ['1EUDrUijPkPkxj6Hl4z2Dlfijl7rSnGa2', '1EqVjghXdwAsqnsEltPD3NpLUycUxs4WR', '1Zu9nLaD8hm9ev9tlIZL9joFMqJzqAMGm'],
+      'SS-BLA-03': ['1wf_bJhE9Th-kHhw8G0vlKFK8laekuM_Z'],
+      'SS-NEG-04': ['1DjK8JZ6MoVCcDzPXd_ApsGGGqRpC73I-', '1biMzl8B9jIF2Upc4OAHfnYdL6fo5P3Et', '1WfdVYkLNjPPjR4iuZiNAfQiMdvw9vkXX'],
+      'SS-CAQ-05': ['1Qa0IVCcJ65tCtXbj0mSy9tNjpLZoqTwU', '1rYtAt2L3m1hJO3Need024knZjxM26RbE', '1JRw5uVBCVVY7Dkxez_dnukSht99oefPU'],
+      'SS-JEA-06': ['1PeFE4tcPN4EdXlMRjSUALbdLeblCDypK', '150HrFMF5Ky0q3nepZ3q01DlUx0lnAH06', '1nkCRwUyCKKrLZpnTgDRE4UE6BZFo40jA'],
+      'SS-GRI-07': ['1SlPdNyaXRvrRw-Uu5UlJ23dBWlv12VXY', '1EPSfnzdG_g0tTwwEvKtBwLAtq4BqA840', '1Rlk4HkaoRM-e7yNdecIQ81v0iDD_vJuv'],
+      'SS-JEA-08': ['14QAEtbdS3ZdK49Z7u68zdH4G97QyjV2P', '1_HQwYTV1idkVCCN3XqyaflhXO4daaVdy', '1To3BKQUCfD3yFmHs89wIO86ggj_HFm1R'],
+      'SS-CAQ-09': ['1YE6bqogzsova8XdoUGHD20QuBJQe4G2F', '1QGmW6kHgMvkFup61NbDGBZ9vQgRzzQkK', '1nPZE1i0A151FQK76Sh2mvd8iMzPHSjyG'],
+      'SS-CAF-10': ['1GYo1gItyfV_dv7vNTnbR381URXs8b-GP', '1b5x9oIXkW1qNA8tuCm1i1CH-05QapwXl', '1KfFlaD1f9cNYkU0dW_GbUVfqXiU85Qwj'],
+      'SS-CAF-11': ['18oaJ3sY_6MOOuXnpUjISCZY93ZysD_hf', '10ikPToZLK4Nn9AVuLulc_4MlI0aWdz1A', '16-oqgBgzYNTIpc2l2XYrrhMKXifNjw-k'],
+      'SS-GRI-12': ['1D8I9npQGUucgoQM891YyKNUSXxRh2CTR', '1e_oqtaT4aPiDaZcS9AQE2_-YfXrA2LqL', '1iRrZ6PprJPtmFk0Mp0i-Zu-XOe01tN6h'],
+      'SS-CAF-13': ['151_ridgoigZ0GU4GIFljWRpn_M8J5S3a', '1S0-y8SXe3zQNGxsRpKHP7f-yWtZtSzqF', '1vrz6O8vJSB9ZzuKKDU8vCAhexpHXrmP_'],
+      'SS-BLA-14': ['16RM4nNFog1-Ngwmom6SVeYcHYf6KgvEZ', '1u9CY4oBDZtu-Kk9dZW7umqUTbino9hqp', '1Kc0VkhlKENQ3ZFoPaxNzy-916N8Bcw5A']
+    };
+
+    function getDriveUrl(id) {
+      return `https://lh3.googleusercontent.com/d/${id}`;
+    }
+
+    function getDriveFallbackUrl(id) {
+      return `https://drive.google.com/thumbnail?id=${id}&sz=w1200`;
+    }
+
+    // =========================================================================
+    // 2. OFFICIAL INVENTORY FROM USER SPREADSHEET (14 REFERENCES)
+    // =========================================================================
+    const DEFAULT_INVENTORY = [
+      { code: 'SS-ROS-01', brand: 'STOP SHOP', description: 'BAGUI ROSA TELA LATERAL', color: 'ROSA', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 4 },
+      { code: 'SS-CAF-02', brand: 'STOP SHOP', description: 'BAGUI DOBLE CARA CAFE SAMBLAZ', color: 'CAFE', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 2 },
+      { code: 'SS-BLA-03', brand: 'STOP SHOP', description: 'SET BAGUI CHAMPO CAFE ROSAS', color: 'BLANCO', category: 'SET', price: 100, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 6 },
+      { code: 'SS-NEG-04', brand: 'STOP SHOP', description: 'BAGUI BARREN BOMBA NEGRO', color: 'NEGRO', category: 'BAGUI', price: 70, sizes: { '6': 2, '8': 2, '10': 2, '12': 2, '14': 0 }, sold: 5 },
+      { code: 'SS-CAQ-05', brand: 'STOP SHOP', description: 'BAGUI EXITO CAQUI', color: 'CAQUI', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 1 },
+      { code: 'SS-JEA-06', brand: 'STOP SHOP', description: 'SET BAGUI PETROLEO CHOMPO', color: 'JEANS', category: 'SET', price: 100, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 3 },
+      { code: 'SS-GRI-07', brand: 'STOP SHOP', description: 'BAGUI GRIS POLILLA', color: 'GRIS', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 1 },
+      { code: 'SS-JEA-08', brand: 'STOP SHOP', description: 'BAGUI BOMBA PETROLEO PLIEGUES', color: 'JEANS', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 2 },
+      { code: 'SS-CAQ-09', brand: 'STOP SHOP', description: 'BAGUI CHICAGO CAQUI', color: 'CAQUI', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 1 },
+      { code: 'SS-CAF-10', brand: 'STOP SHOP', description: 'BAGUI CLASICO CAFE', color: 'CAFE', category: 'BAGUI', price: 60, sizes: { '6': 0, '8': 1, '10': 2, '12': 2, '14': 1 }, sold: 2 },
+      { code: 'SS-CAF-11', brand: 'STOP SHOP', description: 'SET BAGUI CHAMPO MARRON', color: 'CAFE', category: 'SET', price: 100, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 3 },
+      { code: 'SS-GRI-12', brand: 'STOP SHOP', description: 'BAGUI CHICAGO GRIS', color: 'GRIS', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 1 },
+      { code: 'SS-CAF-13', brand: 'STOP SHOP', description: 'BAGUI EXITO VERDOSO', color: 'CAFE', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 0 },
+      { code: 'SS-BLA-14', brand: 'STOP SHOP', description: 'PALAZO LAZER BLANCO', color: 'BLANCO', category: 'PALAZO', price: 60, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 0 }, sold: 2 }
+    ];
+
+    const DEFAULT_COUPONS = [
+      { code: 'BRUMAVIP10', type: 'percent', value: 10, used: false, usedBy: '' },
+      { code: 'CARACAS15', type: 'fixed', value: 15, used: false, usedBy: '' }
+    ];
+
+    // =========================================================================
+    // 3. STATE & PERSISTENCE (localStorage)
+    // =========================================================================
+    let inventory = JSON.parse(localStorage.getItem('bruma_inventory_v2')) || JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
+    let coupons = JSON.parse(localStorage.getItem('bruma_coupons_v2')) || JSON.parse(JSON.stringify(DEFAULT_COUPONS));
+    let orders = JSON.parse(localStorage.getItem('bruma_orders_v2')) || [];
+    let analytics = JSON.parse(localStorage.getItem('bruma_analytics_v2')) || { visits: 128, whatsappClicks: 19, instagramClicks: 34 };
+
+    // Increment visit once per session
+    if (!sessionStorage.getItem('bruma_visited')) {
+      analytics.visits += 1;
+      sessionStorage.setItem('bruma_visited', '1');
+      saveAnalytics();
+    }
+
+    let cart = [];
+    let activeCoupon = null;
+    let activeCategory = 'ALL';
+    let slideIndexMap = {}; // { 'SS-ROS-01': 0 }
+    let selectedSizeMap = {}; // { 'SS-ROS-01': '10' }
+    let lightboxState = { code: null, index: 0 };
+
+    function saveInventory() { localStorage.setItem('bruma_inventory_v2', JSON.stringify(inventory)); }
+    function saveCoupons() { localStorage.setItem('bruma_coupons_v2', JSON.stringify(coupons)); }
+    function saveOrders() { localStorage.setItem('bruma_orders_v2', JSON.stringify(orders)); }
+    function saveAnalytics() { localStorage.setItem('bruma_analytics_v2', JSON.stringify(analytics)); }
+
+    function trackEvent(key) {
+      analytics[key] = (analytics[key] || 0) + 1;
+      saveAnalytics();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 3200);
+    }
+
+    function getTotalStock(item) {
+      return Object.values(item.sizes).reduce((a, b) => a + Number(b || 0), 0);
+    }
+
+    function getTop3Codes() {
+      return [...inventory]
+        .sort((a, b) => (b.sold || 0) - (a.sold || 0))
+        .slice(0, 3)
+        .map(item => item.code);
+    }
+
+    // =========================================================================
+    // 4. RENDER TOP 3 & CATALOG WITH INTERACTIVE 3-PHOTO CAROUSEL
+    // =========================================================================
+    function renderTop3() {
+      const container = document.getElementById('top3-container');
+      const topItems = [...inventory].sort((a, b) => (b.sold || 0) - (a.sold || 0)).slice(0, 3);
+      container.innerHTML = topItems.map((item, idx) => {
+        const photoIds = DRIVE_PHOTO_IDS[item.code] || [];
+        const firstId = photoIds[0] || '';
+        return `
+          <div class="bg-butter rounded-2xl p-3.5 border border-burgundy/15 flex items-center gap-3.5 hover:shadow-md transition-all">
+            <div class="relative w-20 h-24 rounded-xl overflow-hidden bg-burgundy/10 shrink-0 cursor-pointer" onclick="openLightbox('${item.code}', 0)">
+              <img src="${getDriveUrl(firstId)}" onerror="this.onerror=null;this.src='${getDriveFallbackUrl(firstId)}'" alt="${item.description}" loading="lazy" class="w-full h-full object-cover">
+              <span class="absolute top-1.5 left-1.5 bg-burgundy text-butter text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">#${idx + 1}</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <span class="text-[10px] font-bold tracking-widest text-burgundy/65 uppercase">${item.code}</span>
+              <h3 class="text-xs sm:text-sm font-bold text-burgundy truncate">${item.description}</h3>
+              <p class="text-[11px] text-burgundy/75 mt-0.5">${item.color} · <strong>$${Number(item.price).toFixed(2)}</strong></p>
+              <a href="#card-${item.code}" class="inline-block mt-2 text-[11px] font-bold text-burgundy underline underline-offset-4 hover:opacity-75">
+                Seleccionar talla <i class="fa-solid fa-arrow-right text-[9px] ml-0.5"></i>
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function setCategoryFilter(cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        const isSelected = btn.getAttribute('data-cat') === cat;
+        btn.className = isSelected
+          ? 'cat-btn bg-burgundy text-butter text-xs px-4 py-2.5 rounded-full font-semibold transition-all shadow-sm cursor-pointer'
+          : 'cat-btn bg-butter-light text-burgundy border border-burgundy/20 text-xs px-4 py-2.5 rounded-full font-semibold hover:bg-white transition-all cursor-pointer';
+      });
+      renderCatalog();
+    }
+
+    function renderCatalog() {
+      const query = (document.getElementById('search-input').value || '').trim().toUpperCase();
+      const top3Codes = getTop3Codes();
+      const grid = document.getElementById('product-grid');
+
+      const filtered = inventory.filter(item => {
+        const matchesCat = activeCategory === 'ALL' || item.category === activeCategory;
+        const matchesQuery = !query ||
+          item.code.toUpperCase().includes(query) ||
+          item.description.toUpperCase().includes(query) ||
+          item.color.toUpperCase().includes(query);
+        return matchesCat && matchesQuery;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-14 text-burgundy/70 text-sm">No se encontraron prendas con ese criterio de búsqueda.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        const photoIds = DRIVE_PHOTO_IDS[item.code] || [];
+        const currentSlide = slideIndexMap[item.code] || 0;
+        const activePhotoId = photoIds[currentSlide] || photoIds[0] || '';
+        const totalStock = getTotalStock(item);
+        const isTop3 = top3Codes.includes(item.code);
+
+        // Preselect first available size if none selected or out of stock
+        const availableSizes = Object.entries(item.sizes).filter(([, qty]) => qty > 0).map(([sz]) => sz);
+        if (!selectedSizeMap[item.code] || !availableSizes.includes(selectedSizeMap[item.code])) {
+          selectedSizeMap[item.code] = availableSizes[0] || '';
+        }
+        const chosenSize = selectedSizeMap[item.code];
+
+        return `
+          <article id="card-${item.code}" class="bg-butter-light rounded-3xl overflow-hidden border border-burgundy/15 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group">
+            <!-- Photo Carousel Container -->
+            <div class="relative aspect-[3/4] bg-burgundy/10 overflow-hidden">
+              <img
+                id="img-${item.code}"
+                src="${getDriveUrl(activePhotoId)}"
+                onerror="this.onerror=null;this.src='${getDriveFallbackUrl(activePhotoId)}'"
+                alt="${item.description}"
+                loading="lazy"
+                onclick="openLightbox('${item.code}', ${currentSlide})"
+                class="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 group-hover:scale-[1.03]"
+              >
+
+              <!-- Top Badges -->
+              <div class="absolute top-3 left-3 flex flex-col gap-1.5 pointer-events-none">
+                <span class="bg-burgundy/90 backdrop-blur-sm text-butter text-[10px] font-bold tracking-widest px-2.5 py-1 rounded-full uppercase">
+                  ${item.code}
+                </span>
+                ${isTop3 ? `<span class="bg-butter text-burgundy text-[10px] font-bold px-2.5 py-1 rounded-full shadow border border-burgundy/20"><i class="fa-solid fa-fire mr-1"></i>Top Ventas</span>` : ''}
+              </div>
+
+              <!-- Zoom Hint Icon -->
+              <button onclick="openLightbox('${item.code}', ${currentSlide})" title="Ampliar foto" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-butter/85 text-burgundy flex items-center justify-center text-xs shadow hover:bg-butter transition-all cursor-pointer">
+                <i class="fa-solid fa-expand"></i>
+              </button>
+
+              <!-- Carousel Arrows (only if > 1 photo) -->
+              ${photoIds.length > 1 ? `
+                <button onclick="changeSlide('${item.code}', -1)" aria-label="Foto anterior" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-butter/85 hover:bg-butter text-burgundy flex items-center justify-center text-xs shadow-md transition-all cursor-pointer">
+                  <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button onclick="changeSlide('${item.code}', 1)" aria-label="Foto siguiente" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-butter/85 hover:bg-butter text-burgundy flex items-center justify-center text-xs shadow-md transition-all cursor-pointer">
+                  <i class="fa-solid fa-chevron-right"></i>
+                </button>
+                <!-- Dots Indicator -->
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-burgundy/75 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                  ${photoIds.map((_, i) => `
+                    <button onclick="setSlide('${item.code}', ${i})" class="w-2 h-2 rounded-full transition-all cursor-pointer ${i === currentSlide ? 'bg-butter w-4' : 'bg-butter/40'}"></button>
+                  `).join('')}
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Card Details -->
+            <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
+              <div>
+                <div class="flex items-center justify-between gap-2 text-[11px] text-burgundy/70 font-semibold uppercase tracking-wider">
+                  <span>${item.brand} · ${item.color}</span>
+                  <span>${totalStock > 0 ? `${totalStock} disp.` : 'Agotado'}</span>
+                </div>
+                <h3 class="text-sm font-bold text-burgundy mt-1 leading-snug">${item.description}</h3>
+                <p class="font-editorial text-2xl font-bold text-burgundy mt-1">$${Number(item.price).toFixed(2)}</p>
+              </div>
+
+              <!-- Size Selector -->
+              <div class="space-y-2.5">
+                <div class="flex items-center justify-between text-[11px]">
+                  <span class="font-semibold text-burgundy/80 uppercase tracking-wider">Talla:</span>
+                  <span class="text-burgundy/65">${chosenSize ? `Stock talla ${chosenSize}: ${item.sizes[chosenSize]}` : 'Sin stock'}</span>
+                </div>
+                <div class="grid grid-cols-5 gap-1.5">
+                  ${['6', '8', '10', '12', '14'].map(sz => {
+                    const qty = item.sizes[sz] || 0;
+                    const isSelected = chosenSize === sz && qty > 0;
+                    return `
+                      <button
+                        type="button"
+                        ${qty === 0 ? 'disabled' : `onclick="selectSize('${item.code}', '${sz}')"`}
+                        class="py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                          qty === 0
+                            ? 'bg-burgundy/5 text-burgundy/30 border-burgundy/10 line-through cursor-not-allowed'
+                            : isSelected
+                              ? 'bg-burgundy text-butter border-burgundy shadow-sm cursor-pointer'
+                              : 'bg-white text-burgundy border-burgundy/20 hover:border-burgundy cursor-pointer'
+                        }"
+                      >${sz}</button>
+                    `;
+                  }).join('')}
+                </div>
+
+                <button
+                  onclick="addToCart('${item.code}')"
+                  ${totalStock === 0 ? 'disabled' : ''}
+                  class="w-full mt-2 py-3 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                    totalStock === 0
+                      ? 'bg-burgundy/20 text-burgundy/50 cursor-not-allowed'
+                      : 'bg-burgundy text-butter hover:bg-burgundy-light shadow-sm cursor-pointer'
+                  }"
+                >
+                  <i class="fa-solid fa-bag-shopping"></i>
+                  ${totalStock === 0 ? 'Agotado' : 'Agregar a la Bolsa'}
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function changeSlide(code, delta) {
+      const photos = DRIVE_PHOTO_IDS[code] || [];
+      if (photos.length <= 1) return;
+      const current = slideIndexMap[code] || 0;
+      slideIndexMap[code] = (current + delta + photos.length) % photos.length;
+      renderCatalog();
+    }
+
+    function setSlide(code, idx) {
+      slideIndexMap[code] = idx;
+      renderCatalog();
+    }
+
+    function selectSize(code, size) {
+      selectedSizeMap[code] = size;
+      renderCatalog();
+    }
+
+    // =========================================================================
+    // 5. FULLSCREEN LIGHTBOX
+    // =========================================================================
+    function openLightbox(code, idx) {
+      const photos = DRIVE_PHOTO_IDS[code] || [];
+      if (!photos.length) return;
+      lightboxState = { code, index: idx };
+      updateLightboxView();
+      document.getElementById('lightbox-modal').classList.remove('hidden');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox-modal').classList.add('hidden');
+    }
+
+    function navigateLightbox(delta) {
+      const photos = DRIVE_PHOTO_IDS[lightboxState.code] || [];
+      if (photos.length <= 1) return;
+      lightboxState.index = (lightboxState.index + delta + photos.length) % photos.length;
+      updateLightboxView();
+    }
+
+    function updateLightboxView() {
+      const item = inventory.find(p => p.code === lightboxState.code);
+      const photos = DRIVE_PHOTO_IDS[lightboxState.code] || [];
+      const photoId = photos[lightboxState.index];
+      const img = document.getElementById('lb-img');
+      img.src = getDriveUrl(photoId);
+      img.onerror = function() { this.onerror = null; this.src = getDriveFallbackUrl(photoId); };
+      document.getElementById('lb-title').textContent = item ? `${item.code} · ${item.description}` : lightboxState.code;
+      document.getElementById('lb-counter').textContent = `Vista ${lightboxState.index + 1} de ${photos.length}`;
+      document.getElementById('lb-prev').style.display = photos.length > 1 ? 'flex' : 'none';
+      document.getElementById('lb-next').style.display = photos.length > 1 ? 'flex' : 'none';
+    }
+
+    // =========================================================================
+    // 6. SHOP THE LOOK MODAL
+    // =========================================================================
+    function openLookModal() {
+      const bundles = [
+        {
+          title: 'Look Caracas Monocromo',
+          subtitle: 'Silueta relajada de alto impacto visual',
+          codes: ['SS-NEG-04', 'SS-BLA-14']
+        },
+        {
+          title: 'Cápsula Tierra & Textura',
+          subtitle: 'Tonos neutros cálidos para uso diario o casual chic',
+          codes: ['SS-CAF-02', 'SS-CAQ-05']
+        }
+      ];
+
+      document.getElementById('look-bundles-container').innerHTML = bundles.map(b => {
+        const items = b.codes.map(c => inventory.find(i => i.code === c)).filter(Boolean);
+        return `
+          <div class="bg-butter-light rounded-2xl p-4 border border-burgundy/15 flex flex-col justify-between space-y-4">
+            <div>
+              <h4 class="font-editorial text-2xl font-bold text-burgundy">${b.title}</h4>
+              <p class="text-xs text-burgundy/70 mb-3">${b.subtitle}</p>
+              <div class="grid grid-cols-2 gap-2.5">
+                ${items.map(it => {
+                  const pid = (DRIVE_PHOTO_IDS[it.code] || [])[0];
+                  return `
+                    <div class="bg-butter rounded-xl p-2 border border-burgundy/10">
+                      <img src="${getDriveUrl(pid)}" onerror="this.onerror=null;this.src='${getDriveFallbackUrl(pid)}'" class="w-full h-36 object-cover rounded-lg mb-2">
+                      <p class="text-[10px] font-bold text-burgundy">${it.code}</p>
+                      <p class="text-[11px] font-semibold text-burgundy truncate">${it.description}</p>
+                      <p class="text-xs font-bold text-burgundy mt-0.5">$${it.price.toFixed(2)}</p>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+            <button onclick="addBundleToCart(${JSON.stringify(b.codes).replace(/"/g, '&quot;')})" class="w-full bg-burgundy text-butter py-2.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-burgundy-light transition-all cursor-pointer">
+              Agregar Look Completo
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('look-modal').classList.remove('hidden');
+    }
+
+    function closeLookModal() {
+      document.getElementById('look-modal').classList.add('hidden');
+    }
+
+    function addBundleToCart(codes) {
+      let addedCount = 0;
+      codes.forEach(code => {
+        const item = inventory.find(i => i.code === code);
+        if (!item) return;
+        const availSize = Object.entries(item.sizes).find(([, q]) => q > 0);
+        if (availSize) {
+          selectedSizeMap[code] = availSize[0];
+          addToCart(code, true);
+          addedCount++;
+        }
+      });
+      closeLookModal();
+      if (addedCount > 0) {
+        showToast(`Se agregaron ${addedCount} piezas del look a tu bolsa.`);
+        toggleCart(true);
+      }
+    }
+
+    // =========================================================================
+    // 7. SHOPPING BAG, VIP COUPONS & WHATSAPP CHECKOUT
+    // =========================================================================
+    function toggleCart(forceOpen) {
+      const drawer = document.getElementById('cart-drawer');
+      if (forceOpen === true) drawer.classList.remove('hidden');
+      else if (forceOpen === false) drawer.classList.add('hidden');
+      else drawer.classList.toggle('hidden');
+      renderCart();
+    }
+
+    function addToCart(code, silent = false) {
+      const item = inventory.find(p => p.code === code);
+      if (!item) return;
+      const size = selectedSizeMap[code];
+      if (!size || (item.sizes[size] || 0) <= 0) {
+        showToast('Selecciona una talla disponible.');
+        return;
+      }
+
+      const existing = cart.find(c => c.code === code && c.size === size);
+      const currentQtyInCart = existing ? existing.qty : 0;
+      if (currentQtyInCart + 1 > item.sizes[size]) {
+        showToast(`Solo hay ${item.sizes[size]} unidad(es) disponible(s) en talla ${size}.`);
+        return;
+      }
+
+      if (existing) existing.qty += 1;
+      else cart.push({ code, size, qty: 1 });
+
+      updateCartBadge();
+      if (!silent) showToast(`${item.description} (Talla ${size}) agregada.`);
+    }
+
+    function updateCartQty(idx, delta) {
+      const entry = cart[idx];
+      if (!entry) return;
+      const item = inventory.find(p => p.code === entry.code);
+      const maxStock = item ? (item.sizes[entry.size] || 0) : 0;
+      const nextQty = entry.qty + delta;
+      if (nextQty <= 0) {
+        cart.splice(idx, 1);
+      } else if (nextQty <= maxStock) {
+        entry.qty = nextQty;
+      } else {
+        showToast(`Stock máximo alcanzado (${maxStock} unid.).`);
+      }
+      renderCart();
+      updateCartBadge();
+    }
+
+    function computeTotals() {
+      const subtotal = cart.reduce((sum, entry) => {
+        const item = inventory.find(p => p.code === entry.code);
+        return sum + (item ? item.price * entry.qty : 0);
+      }, 0);
+
+      let discount = 0;
+      if (activeCoupon && subtotal > 0) {
+        if (activeCoupon.type === 'percent') discount = subtotal * (activeCoupon.value / 100);
+        else discount = Math.min(subtotal, activeCoupon.value);
+      }
+      const total = Math.max(0, subtotal - discount);
+      return { subtotal, discount, total };
+    }
+
+    function updateCartBadge() {
+      const count = cart.reduce((s, c) => s + c.qty, 0);
+      const { total } = computeTotals();
+      document.getElementById('cart-badge').textContent = count;
+      document.getElementById('cart-total-price').textContent = `$${total.toFixed(2)}`;
+    }
+
+    function applyCoupon() {
+      const codeInput = (document.getElementById('coupon-input').value || '').trim().toUpperCase();
+      const feedback = document.getElementById('coupon-feedback');
+      if (!codeInput) {
+        feedback.textContent = 'Ingresa un código promocional.';
+        feedback.className = 'text-[11px] mt-1.5 font-semibold text-burgundy';
+        return;
+      }
+      const found = coupons.find(c => c.code.toUpperCase() === codeInput);
+      if (!found) {
+        activeCoupon = null;
+        feedback.textContent = 'Cupón inválido o inexistente.';
+        feedback.className = 'text-[11px] mt-1.5 font-semibold text-burgundy';
+      } else if (found.used) {
+        activeCoupon = null;
+        feedback.textContent = 'Este cupón VIP ya fue utilizado anteriormente.';
+        feedback.className = 'text-[11px] mt-1.5 font-semibold text-burgundy';
+      } else {
+        activeCoupon = found;
+        const label = found.type === 'percent' ? `${found.value}% de descuento` : `$${found.value} USD de descuento`;
+        feedback.textContent = `¡Cupón ${found.code} aplicado! (${label})`;
+        feedback.className = 'text-[11px] mt-1.5 font-bold text-burgundy';
+      }
+      renderCart();
+      updateCartBadge();
+    }
+
+    function updatePaymentHint() {
+      const method = document.getElementById('cust-payment').value;
+      const hints = {
+        'Pago Móvil': 'Recibirás los datos bancarios oficiales y monto en Bs. a tasa BCV al enviar el pedido.',
+        'Zelle': 'Confirmación inmediata al enviar comprobante Zelle por WhatsApp.',
+        'Binance Pay (USDT)': 'Transferencia sin comisión vía Binance Pay ID / correo oficial BRUMA.',
+        'Efectivo ($)': 'Pagas en divisas exactas al recibir tu delivery gratis en Caracas.'
+      };
+      document.getElementById('payment-hint').textContent = hints[method] || '';
+    }
+
+    function renderCart() {
+      const list = document.getElementById('cart-items-list');
+      const fields = document.getElementById('cart-checkout-fields');
+      const footer = document.getElementById('cart-footer');
+
+      if (cart.length === 0) {
+        list.innerHTML = `
+          <div class="text-center py-12 space-y-3">
+            <i class="fa-solid fa-bag-shopping text-4xl text-burgundy/25"></i>
+            <p class="text-sm font-semibold text-burgundy">Tu bolsa está vacía</p>
+            <p class="text-xs text-burgundy/70">Explora nuestras 14 referencias y elige tu talla ideal.</p>
+          </div>
+        `;
+        fields.classList.add('hidden');
+        footer.classList.add('hidden');
+        updateCartBadge();
+        return;
+      }
+
+      fields.classList.remove('hidden');
+      footer.classList.remove('hidden');
+
+      list.innerHTML = cart.map((entry, idx) => {
+        const item = inventory.find(p => p.code === entry.code);
+        const photoId = (DRIVE_PHOTO_IDS[entry.code] || [])[0];
+        return `
+          <div class="bg-butter-light p-3 rounded-2xl border border-burgundy/15 flex items-center gap-3">
+            <img src="${getDriveUrl(photoId)}" onerror="this.onerror=null;this.src='${getDriveFallbackUrl(photoId)}'" class="w-16 h-20 object-cover rounded-xl shrink-0">
+            <div class="flex-1 min-w-0">
+              <span class="text-[10px] font-bold text-burgundy/65 uppercase">${item.code} · Talla ${entry.size}</span>
+              <h4 class="text-xs font-bold text-burgundy truncate">${item.description}</h4>
+              <p class="text-xs font-bold text-burgundy mt-1">$${(item.price * entry.qty).toFixed(2)}</p>
+              <div class="flex items-center gap-2 mt-2">
+                <button onclick="updateCartQty(${idx}, -1)" class="w-6 h-6 rounded-full bg-butter border border-burgundy/20 text-burgundy text-xs font-bold cursor-pointer">-</button>
+                <span class="text-xs font-bold text-burgundy px-1">${entry.qty}</span>
+                <button onclick="updateCartQty(${idx}, 1)" class="w-6 h-6 rounded-full bg-butter border border-burgundy/20 text-burgundy text-xs font-bold cursor-pointer">+</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const { subtotal, discount, total } = computeTotals();
+      document.getElementById('summary-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+      if (discount > 0 && activeCoupon) {
+        document.getElementById('summary-discount-row').classList.remove('hidden');
+        document.getElementById('summary-coupon-code').textContent = activeCoupon.code;
+        document.getElementById('summary-discount').textContent = `-$${discount.toFixed(2)}`;
+      } else {
+        document.getElementById('summary-discount-row').classList.add('hidden');
+      }
+      document.getElementById('summary-total').textContent = `$${total.toFixed(2)}`;
+      updateCartBadge();
+    }
+
+    function checkoutWhatsApp() {
+      const name = (document.getElementById('cust-name').value || '').trim();
+      const phone = (document.getElementById('cust-phone').value || '').trim();
+      const address = (document.getElementById('cust-address').value || '').trim();
+      const payment = document.getElementById('cust-payment').value;
+
+      if (!name || !phone || !address) {
+        showToast('Por favor completa nombre, teléfono y dirección en Caracas.');
+        return;
+      }
+
+      const { subtotal, discount, total } = computeTotals();
+      const orderItems = [];
+
+      // Deduct stock and increment sold counter
+      cart.forEach(entry => {
+        const item = inventory.find(p => p.code === entry.code);
+        if (item) {
+          item.sizes[entry.size] = Math.max(0, (item.sizes[entry.size] || 0) - entry.qty);
+          item.sold = (item.sold || 0) + entry.qty;
+          orderItems.push({
+            code: item.code,
+            description: item.description,
+            size: entry.size,
+            qty: entry.qty,
+            price: item.price
+          });
+        }
+      });
+
+      // Mark single-use coupon as redeemed
+      let appliedCode = 'Ninguno';
+      if (activeCoupon) {
+        const cObj = coupons.find(c => c.code === activeCoupon.code);
+        if (cObj) {
+          cObj.used = true;
+          cObj.usedBy = `${name} (${new Date().toLocaleDateString('es-VE')})`;
+          appliedCode = cObj.code;
+        }
+      }
+
+      const orderRecord = {
+        id: 'BRM-' + Date.now().toString().slice(-6),
+        date: new Date().toISOString().split('T')[0],
+        customer: name,
+        phone,
+        address,
+        payment,
+        coupon: appliedCode,
+        subtotal,
+        discount,
+        total,
+        items: orderItems
+      };
+
+      orders.unshift(orderRecord);
+      saveInventory();
+      saveCoupons();
+      saveOrders();
+      trackEvent('whatsappClicks');
+
+      const lines = orderItems.map(i => `• ${i.qty}x ${i.code} (${i.description}) - Talla ${i.size}: $${(i.price * i.qty).toFixed(2)}`).join('%0A');
+      const discountLine = discount > 0 ? `%0A*Cupón VIP (${appliedCode}):* -$${discount.toFixed(2)}` : '';
+      const msg = `*NUEVO PEDIDO BRUMA (${orderRecord.id})*%0A%0A*Clienta:* ${encodeURIComponent(name)}%0A*Teléfono:* ${encodeURIComponent(phone)}%0A*Delivery Gratis (Caracas):* ${encodeURIComponent(address)}%0A*Método de Pago:* ${encodeURIComponent(payment)}%0A%0A*Detalle del Pedido:*%0A${lines}%0A%0A*Subtotal:* $${subtotal.toFixed(2)}${discountLine}%0A*TOTAL A PAGAR:* $${total.toFixed(2)}`;
+
+      cart = [];
+      activeCoupon = null;
+      document.getElementById('coupon-input').value = '';
+      document.getElementById('coupon-feedback').textContent = '';
+      toggleCart(false);
+      renderCatalog();
+      renderTop3();
+
+      window.open(`https://wa.me/584241325811?text=${msg}`, '_blank');
+    }
+
+    // =========================================================================
+    // 8. ADMIN PANEL (PASSWORD: bruma2026)
+    // =========================================================================
+    let isAdminAuthenticated = false;
+
+    function openAdminModal() {
+      document.getElementById('admin-modal').classList.remove('hidden');
+      if (isAdminAuthenticated) {
+        showAdminWorkspace();
+      }
+    }
+
+    function closeAdminModal() {
+      document.getElementById('admin-modal').classList.add('hidden');
+    }
+
+    function verifyAdminPassword() {
+      const val = document.getElementById('admin-password-input').value;
+      if (val === 'bruma2026') {
+        isAdminAuthenticated = true;
+        document.getElementById('admin-login-error').classList.add('hidden');
+        showAdminWorkspace();
+      } else {
+        document.getElementById('admin-login-error').classList.remove('hidden');
+      }
+    }
+
+    function showAdminWorkspace() {
+      document.getElementById('admin-login-view').classList.add('hidden');
+      document.getElementById('admin-dashboard-view').classList.remove('hidden');
+      renderAdminInventory();
+      renderCouponsTable();
+      renderAnalyticsTab();
+      renderOrdersTable();
+    }
+
+    function switchAdminTab(tab) {
+      ['inventory', 'coupons', 'analytics', 'reports'].forEach(t => {
+        document.getElementById(`admin-tab-${t}`).classList.toggle('hidden', t !== tab);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        btn.className = t === tab
+          ? 'admin-tab-btn bg-burgundy text-butter px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer'
+          : 'admin-tab-btn bg-butter-light text-burgundy border border-burgundy/20 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer';
+      });
+      if (tab === 'analytics') renderAnalyticsTab();
+      if (tab === 'reports') renderOrdersTable();
+    }
+
+    function renderAdminInventory() {
+      const tbody = document.getElementById('admin-inventory-tbody');
+      tbody.innerHTML = inventory.map((item, idx) => {
+        const pid = (DRIVE_PHOTO_IDS[item.code] || [])[0];
+        const total = getTotalStock(item);
+        return `
+          <tr class="hover:bg-butter-light/60">
+            <td class="p-2.5">
+              <img src="${getDriveUrl(pid)}" onerror="this.onerror=null;this.src='${getDriveFallbackUrl(pid)}'" class="w-10 h-12 object-cover rounded-lg">
+            </td>
+            <td class="p-2.5 font-bold text-burgundy">${item.code}</td>
+            <td class="p-2.5 font-medium text-burgundy-dark">${item.description}</td>
+            <td class="p-2.5 text-burgundy/80">${item.color}</td>
+            ${['6', '8', '10', '12', '14'].map(sz => `
+              <td class="p-2 text-center">
+                <input type="number" min="0" value="${item.sizes[sz] || 0}" onchange="updateStockCell(${idx}, '${sz}', this.value)" class="w-12 text-center bg-butter-light border border-burgundy/20 rounded-lg py-1 font-bold text-burgundy">
+              </td>
+            `).join('')}
+            <td class="p-2.5 text-center font-bold text-burgundy">${total}</td>
+            <td class="p-2.5 text-right">
+              <input type="number" min="0" step="1" value="${item.price}" onchange="updatePriceCell(${idx}, this.value)" class="w-16 text-right bg-butter-light border border-burgundy/20 rounded-lg px-2 py-1 font-bold text-burgundy">
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function updateStockCell(idx, size, val) {
+      inventory[idx].sizes[size] = Math.max(0, parseInt(val, 10) || 0);
+      saveInventory();
+      renderAdminInventory();
+      renderCatalog();
+      renderTop3();
+      showToast('Stock actualizado.');
+    }
+
+    function updatePriceCell(idx, val) {
+      inventory[idx].price = Math.max(0, parseFloat(val) || 0);
+      saveInventory();
+      renderCatalog();
+      renderTop3();
+      showToast('Precio actualizado.');
+    }
+
+    function resetDefaultInventory() {
+      inventory = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
+      saveInventory();
+      renderAdminInventory();
+      renderCatalog();
+      renderTop3();
+      showToast('Inventario restaurado a los valores iniciales de tu hoja de cálculo.');
+    }
+
+    function downloadExcelTemplate() {
+      const rows = inventory.map(i => ({
+        MARCA: i.brand,
+        CODIGO: i.code,
+        DESCRIPCION: i.description,
+        COLOR: i.color,
+        'TALLA 6': i.sizes['6'] || 0,
+        'TALLA 8': i.sizes['8'] || 0,
+        'TALLA 10': i.sizes['10'] || 0,
+        'TALLA 12': i.sizes['12'] || 0,
+        'TALLA 14': i.sizes['14'] || 0,
+        'PRECIO VENTA': i.price
+      }));
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Inventario_BRUMA');
+      XLSX.writeFile(wb, 'Inventario_BRUMA_2026.xlsx');
+    }
+
+    function handleSpreadsheetUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet);
+        let updated = 0;
+
+        rows.forEach(row => {
+          const code = String(row['CODIGO'] || '').trim().toUpperCase();
+          if (!code) return;
+          const existing = inventory.find(i => i.code === code);
+          const rawPrice = String(row['PRECIO VENTA'] || '0').replace(',', '.').replace(/[^0-9.]/g, '');
+          const price = parseFloat(rawPrice) || 70;
+          const sizes = {
+            '6': parseInt(row['TALLA 6'], 10) || 0,
+            '8': parseInt(row['TALLA 8'], 10) || 0,
+            '10': parseInt(row['TALLA 10'], 10) || 0,
+            '12': parseInt(row['TALLA 12'], 10) || 0,
+            '14': parseInt(row['TALLA 14'], 10) || 0
+          };
+          if (existing) {
+            existing.description = row['DESCRIPCION'] || existing.description;
+            existing.color = row['COLOR'] || existing.color;
+            existing.price = price;
+            existing.sizes = sizes;
+            updated++;
+          }
+        });
+
+        saveInventory();
+        renderAdminInventory();
+        renderCatalog();
+        renderTop3();
+        showToast(`Se actualizaron ${updated} referencias desde el archivo.`);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // Coupons Management
+    function createCoupon() {
+      const code = (document.getElementById('new-coupon-code').value || '').trim().toUpperCase();
+      const type = document.getElementById('new-coupon-type').value;
+      const value = parseFloat(document.getElementById('new-coupon-value').value);
+      if (!code || isNaN(value) || value <= 0) {
+        showToast('Completa un código y valor válido.');
+        return;
+      }
+      if (coupons.some(c => c.code === code)) {
+        showToast('Ese código ya existe.');
+        return;
+      }
+      coupons.unshift({ code, type, value, used: false, usedBy: '' });
+      saveCoupons();
+      document.getElementById('new-coupon-code').value = '';
+      document.getElementById('new-coupon-value').value = '';
+      renderCouponsTable();
+      showToast(`Cupón ${code} creado.`);
+    }
+
+    function deleteCoupon(idx) {
+      coupons.splice(idx, 1);
+      saveCoupons();
+      renderCouponsTable();
+    }
+
+    function renderCouponsTable() {
+      const tbody = document.getElementById('admin-coupons-tbody');
+      tbody.innerHTML = coupons.map((c, idx) => `
+        <tr>
+          <td class="p-3 font-bold text-burgundy">${c.code}</td>
+          <td class="p-3">${c.type === 'percent' ? `${c.value}%` : `$${c.value.toFixed(2)}`}</td>
+          <td class="p-3">
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${c.used ? 'bg-burgundy/15 text-burgundy' : 'bg-butter text-burgundy border border-burgundy/25'}">
+              ${c.used ? 'Usado' : 'Disponible'}
+            </span>
+          </td>
+          <td class="p-3 text-burgundy/75">${c.usedBy || '—'}</td>
+          <td class="p-3 text-right">
+            <button onclick="deleteCoupon(${idx})" class="text-burgundy/60 hover:text-burgundy cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Analytics & Top 3
+    function renderAnalyticsTab() {
+      const totalRevenue = orders.reduce((s, o) => s + o.total, 0);
+      const totalOrders = orders.length;
+      const convRate = analytics.visits > 0 ? ((totalOrders / analytics.visits) * 100).toFixed(1) : '0.0';
+
+      document.getElementById('admin-kpi-cards').innerHTML = `
+        <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15">
+          <span class="text-[10px] uppercase tracking-wider text-burgundy/65 font-bold">Ingresos Confirmados</span>
+          <p class="font-editorial text-3xl font-bold text-burgundy mt-1">$${totalRevenue.toFixed(2)}</p>
+        </div>
+        <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15">
+          <span class="text-[10px] uppercase tracking-wider text-burgundy/65 font-bold">Pedidos Generados</span>
+          <p class="font-editorial text-3xl font-bold text-burgundy mt-1">${totalOrders}</p>
+        </div>
+        <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15">
+          <span class="text-[10px] uppercase tracking-wider text-burgundy/65 font-bold">Visitas a Tienda</span>
+          <p class="font-editorial text-3xl font-bold text-burgundy mt-1">${analytics.visits}</p>
+        </div>
+        <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15">
+          <span class="text-[10px] uppercase tracking-wider text-burgundy/65 font-bold">Conversión / Clics WA</span>
+          <p class="font-editorial text-3xl font-bold text-burgundy mt-1">${convRate}% <span class="text-xs font-sans font-normal">(${analytics.whatsappClicks} WA)</span></p>
+        </div>
+      `;
+
+      const sorted = [...inventory].sort((a, b) => (b.sold || 0) - (a.sold || 0)).slice(0, 5);
+      document.getElementById('admin-top3-list').innerHTML = sorted.map((it, idx) => `
+        <div class="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-burgundy/10 text-xs">
+          <span><strong class="text-burgundy">#${idx + 1} ${it.code}</strong> · ${it.description}</span>
+          <span class="font-bold text-burgundy">${it.sold || 0} unid. vendidas</span>
+        </div>
+      `).join('');
+    }
+
+    // Orders & PDF Report
+    function getFilteredOrders() {
+      const start = document.getElementById('report-start-date').value;
+      const end = document.getElementById('report-end-date').value;
+      return orders.filter(o => {
+        if (start && o.date < start) return false;
+        if (end && o.date > end) return false;
+        return true;
+      });
+    }
+
+    function renderOrdersTable() {
+      const filtered = getFilteredOrders();
+      const tbody = document.getElementById('admin-orders-tbody');
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-burgundy/65">No hay pedidos registrados en este rango de fechas.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = filtered.map(o => `
+        <tr>
+          <td class="p-3 font-semibold">${o.date}</td>
+          <td class="p-3 font-bold text-burgundy">${o.customer}</td>
+          <td class="p-3">${o.items.map(i => `${i.qty}x ${i.code} (T${i.size})`).join(', ')}</td>
+          <td class="p-3">${o.payment}</td>
+          <td class="p-3">${o.coupon}</td>
+          <td class="p-3 text-right font-bold text-burgundy">$${o.total.toFixed(2)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function exportSalesPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const filtered = getFilteredOrders();
+      const totalSum = filtered.reduce((s, o) => s + o.total, 0);
+
+      doc.setFillColor(92, 10, 30);
+      doc.rect(0, 0, 210, 32, 'F');
+      doc.setTextColor(253, 243, 199);
+      doc.setFontSize(20);
+      doc.text('BRUMA (@bruma_ccs) · Reporte de Ventas', 14, 20);
+
+      doc.setTextColor(64, 6, 20);
+      doc.setFontSize(11);
+      doc.text(`Fecha de emisión: ${new Date().toLocaleDateString('es-VE')}`, 14, 42);
+      doc.text(`Pedidos en reporte: ${filtered.length}   |   Ingresos Totales: $${totalSum.toFixed(2)}`, 14, 49);
+
+      let y = 62;
+      doc.setFontSize(9);
+      doc.setFont(undefined, 'bold');
+      doc.text('FECHA', 14, y);
+      doc.text('CLIENTE', 40, y);
+      doc.text('MÉTODO PAGO', 95, y);
+      doc.text('CUPÓN', 140, y);
+      doc.text('TOTAL', 175, y);
+      doc.line(14, y + 2, 196, y + 2);
+      y += 8;
+      doc.setFont(undefined, 'normal');
+
+      filtered.forEach(o => {
+        if (y > 275) { doc.addPage(); y = 20; }
+        doc.text(o.date, 14, y);
+        doc.text(o.customer.slice(0, 26), 40, y);
+        doc.text(o.payment.slice(0, 20), 95, y);
+        doc.text(o.coupon, 140, y);
+        doc.text(`$${o.total.toFixed(2)}`, 175, y);
+        y += 7;
+      });
+
+      doc.save(`Reporte_Ventas_BRUMA_${new Date().toISOString().split('T')[0]}.pdf`);
+      showToast('Reporte PDF descargado.');
+    }
+
+    // =========================================================================
+    // 9. INITIALIZE APP
+    // =========================================================================
+    renderTop3();
+    renderCatalog();
+    updateCartBadge();
+  </script>
+</body>
+</html>
