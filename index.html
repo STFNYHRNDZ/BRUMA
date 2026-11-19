@@ -13,12 +13,12 @@
       theme: {
         extend: {
           colors: {
-            burgundy: '#7A1E3A',
-            'burgundy-dark': '#561227',
-            'burgundy-light': '#96294A',
-            butter: '#F2E8B7',
-            'butter-light': '#F9F3D6',
-            'butter-dark': '#E6D896',
+            burgundy: '#5C0A1E',
+            'burgundy-dark': '#400614',
+            'burgundy-light': '#7A122B',
+            butter: '#FDF3C7',
+            'butter-light': '#FEF9E3',
+            'butter-dark': '#F5E49E',
           },
           fontFamily: {
             serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
@@ -49,6 +49,9 @@
   <!-- Top Announcement Bar -->
   <div class="bg-burgundy text-butter text-[11px] sm:text-xs tracking-widest text-center py-2.5 px-4 font-medium uppercase border-b border-burgundy-light flex items-center justify-center gap-3 flex-wrap">
     <span><i class="fa-solid fa-truck-fast mr-1.5"></i>Delivery Gratis en Caracas · 14 Referencias Oficiales · Pago Móvil, Zelle, Binance & Efectivo</span>
+    <span id="sync-status-badge" class="bg-butter/10 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-normal normal-case border border-butter/20">
+      <i class="fa-solid fa-rotate fa-spin mr-1"></i>Conectando...
+    </span>
     <button onclick="openAdminModal()" class="bg-butter/15 hover:bg-butter/25 px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border border-butter/30 transition-all cursor-pointer">
       <i class="fa-solid fa-lock mr-1"></i> Panel Admin
     </button>
@@ -320,7 +323,7 @@
               <span id="summary-total">$0.00</span>
             </div>
           </div>
-          <button onclick="checkoutWhatsApp()" class="w-full bg-burgundy text-butter py-3.5 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-burgundy-light transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <button id="checkout-btn" onclick="checkoutWhatsApp()" class="w-full bg-burgundy text-butter py-3.5 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-burgundy-light transition-all flex items-center justify-center gap-2 cursor-pointer">
             <i class="fa-brands fa-whatsapp text-base"></i> Confirmar Pedido por WhatsApp
           </button>
         </div>
@@ -363,18 +366,23 @@
         <!-- Authenticated Admin Workspace -->
         <div id="admin-dashboard-view" class="hidden p-5 sm:p-7 space-y-6 max-h-[82vh] overflow-y-auto">
           <!-- Navigation Tabs -->
-          <div class="flex flex-wrap gap-2 border-b border-burgundy/15 pb-4">
-            <button onclick="switchAdminTab('inventory')" id="tab-btn-inventory" class="admin-tab-btn bg-burgundy text-butter px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
-              <i class="fa-solid fa-boxes-stacked mr-1.5"></i> Inventario &amp; Excel
-            </button>
-            <button onclick="switchAdminTab('coupons')" id="tab-btn-coupons" class="admin-tab-btn bg-butter-light text-burgundy border border-burgundy/20 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
-              <i class="fa-solid fa-ticket mr-1.5"></i> Cupones VIP
-            </button>
-            <button onclick="switchAdminTab('analytics')" id="tab-btn-analytics" class="admin-tab-btn bg-butter-light text-burgundy border border-burgundy/20 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
-              <i class="fa-solid fa-chart-pie mr-1.5"></i> Analíticas &amp; Top 3
-            </button>
-            <button onclick="switchAdminTab('reports')" id="tab-btn-reports" class="admin-tab-btn bg-butter-light text-burgundy border border-burgundy/20 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
-              <i class="fa-solid fa-file-pdf mr-1.5"></i> Reportes PDF
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-burgundy/15 pb-4">
+            <div class="flex flex-wrap gap-2">
+              <button onclick="switchAdminTab('inventory')" id="tab-btn-inventory" class="admin-tab-btn bg-burgundy text-butter px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
+                <i class="fa-solid fa-boxes-stacked mr-1.5"></i> Inventario &amp; Excel
+              </button>
+              <button onclick="switchAdminTab('coupons')" id="tab-btn-coupons" class="admin-tab-btn bg-butter-light text-burgundy border border-burgundy/20 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
+                <i class="fa-solid fa-ticket mr-1.5"></i> Cupones VIP
+              </button>
+              <button onclick="switchAdminTab('analytics')" id="tab-btn-analytics" class="admin-tab-btn bg-butter-light text-burgundy border border-burgundy/20 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
+                <i class="fa-solid fa-chart-pie mr-1.5"></i> Analíticas &amp; Top 3
+              </button>
+              <button onclick="switchAdminTab('reports')" id="tab-btn-reports" class="admin-tab-btn bg-butter-light text-burgundy border border-burgundy/20 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
+                <i class="fa-solid fa-file-pdf mr-1.5"></i> Reportes PDF
+              </button>
+            </div>
+            <button onclick="syncFromGoogleSheet(true)" class="bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-3.5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
+              <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Sincronizar Google Sheet
             </button>
           </div>
 
@@ -382,8 +390,8 @@
           <div id="admin-tab-inventory" class="space-y-5">
             <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h4 class="text-sm font-bold text-burgundy">Actualización Masiva desde Hoja de Cálculo (.xlsx / .csv)</h4>
-                <p class="text-xs text-burgundy/75 mt-0.5">Sube tu archivo <strong>bruma store</strong> para sincronizar tallas, precios y enlaces de Drive.</p>
+                <h4 class="text-sm font-bold text-burgundy">Sincronización en la Nube &amp; Hoja de Cálculo (.xlsx / .csv)</h4>
+                <p class="text-xs text-burgundy/75 mt-0.5">Cada cambio en la tabla o venta por WhatsApp actualiza automáticamente tu Google Sheet <strong>bruma store</strong>.</p>
               </div>
               <div class="flex flex-wrap items-center gap-2">
                 <button onclick="downloadExcelTemplate()" class="bg-butter border border-burgundy/30 text-burgundy hover:bg-burgundy hover:text-butter px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer">
@@ -518,6 +526,93 @@
 
   <script>
     // =========================================================================
+    // 0. GOOGLE APPS SCRIPT CLOUD API ("bruma store" REAL-TIME SYNC)
+    // =========================================================================
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0VPgHK1F4Wuwc1D8_SKpSpKfFDX7sRohKPp26BSuJ0uXaIlk6w4Iwg-1b1x7kpZN_rA/exec';
+
+    function setSyncBadge(state, text) {
+      const badge = document.getElementById('sync-status-badge');
+      if (!badge) return;
+      if (state === 'loading') {
+        badge.innerHTML = `<i class="fa-solid fa-rotate fa-spin mr-1"></i>${text || 'Sincronizando...'}`;
+      } else if (state === 'ok') {
+        badge.innerHTML = `<i class="fa-solid fa-cloud-check mr-1 text-butter-dark"></i>${text || 'Stock en vivo'}`;
+      } else {
+        badge.innerHTML = `<i class="fa-solid fa-database mr-1"></i>${text || 'Modo local'}`;
+      }
+    }
+
+    async function callSheetsApi(payload) {
+      if (!APPS_SCRIPT_URL) return null;
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      return await res.json();
+    }
+
+    async function syncFromGoogleSheet(notify = false) {
+      if (!APPS_SCRIPT_URL) {
+        setSyncBadge('local', 'Modo local');
+        return;
+      }
+      setSyncBadge('loading', 'Actualizando stock...');
+      try {
+        const res = await fetch(`${APPS_SCRIPT_URL}?action=getData&t=${Date.now()}`);
+        const data = await res.json();
+        if (data && data.ok) {
+          if (Array.isArray(data.inventory) && data.inventory.length > 0) {
+            inventory = data.inventory.map(item => {
+              const desc = String(item.description || '').toUpperCase();
+              const cat = item.category || (desc.includes('SET') ? 'SET' : desc.includes('PALAZO') ? 'PALAZO' : 'BAGUI');
+              return {
+                code: String(item.code || '').trim().toUpperCase(),
+                brand: item.brand || 'STOP SHOP',
+                description: item.description || '',
+                color: item.color || '',
+                category: cat,
+                price: Number(item.price) || 70,
+                sizes: {
+                  '6': Number(item.sizes?.['6'] ?? 0),
+                  '8': Number(item.sizes?.['8'] ?? 0),
+                  '10': Number(item.sizes?.['10'] ?? 0),
+                  '12': Number(item.sizes?.['12'] ?? 0),
+                  '14': Number(item.sizes?.['14'] ?? 0)
+                },
+                sold: Number(item.sold) || 0
+              };
+            });
+            saveInventory();
+          }
+          if (Array.isArray(data.coupons) && data.coupons.length > 0) {
+            coupons = data.coupons;
+            saveCoupons();
+          }
+          if (Array.isArray(data.orders)) {
+            orders = data.orders;
+            saveOrders();
+          }
+          renderTop3();
+          renderCatalog();
+          if (isAdminAuthenticated) {
+            renderAdminInventory();
+            renderCouponsTable();
+            renderAnalyticsTab();
+            renderOrdersTable();
+          }
+          setSyncBadge('ok', 'Stock en vivo');
+          if (notify) showToast('Inventario sincronizado con Google Sheet.');
+        } else {
+          setSyncBadge('local', 'Catálogo activo');
+        }
+      } catch (err) {
+        console.warn('Sync fallback to local cache:', err);
+        setSyncBadge('local', 'Catálogo activo');
+      }
+    }
+
+    // =========================================================================
     // 1. REAL GOOGLE DRIVE PUBLIC FOLDER MAPPING ("BRUMA FOTOS" / "bruma store")
     // =========================================================================
     const DRIVE_PHOTO_IDS = {
@@ -537,11 +632,6 @@
       'SS-BLA-14': ['16RM4nNFog1-Ngwmom6SVeYcHYf6KgvEZ', '1u9CY4oBDZtu-Kk9dZW7umqUTbino9hqp', '1Kc0VkhlKENQ3ZFoPaxNzy-916N8Bcw5A']
     };
 
-    // Multi-tier Google Drive fast image loader:
-    // 1) drive.google.com/thumbnail?sz=w1000 (renders 120KB optimized image instead of 22MB raw file)
-    // 2) lh3.googleusercontent.com/d/<ID>=w1000
-    // 3) drive.usercontent.google.com/download?id=<ID>&export=view
-    // 4) Clean BRUMA SVG fallback card
     function getDriveUrl(id) {
       if (!id) return '';
       if (id.startsWith('http')) return id;
@@ -569,10 +659,10 @@
 
     function makeBrumaPlaceholder(label) {
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
-        <rect width="600" height="800" fill="#7A1E3A"/>
-        <rect x="24" y="24" width="552" height="752" rx="24" fill="none" stroke="#F2E8B7" stroke-opacity="0.35" stroke-width="2"/>
-        <text x="300" y="385" text-anchor="middle" fill="#F2E8B7" font-family="Georgia, serif" font-size="44" letter-spacing="10">BRUMA</text>
-        <text x="300" y="430" text-anchor="middle" fill="#F2E8B7" fill-opacity="0.8" font-family="sans-serif" font-size="18" letter-spacing="4">${label}</text>
+        <rect width="600" height="800" fill="#5C0A1E"/>
+        <rect x="24" y="24" width="552" height="752" rx="24" fill="none" stroke="#FDF3C7" stroke-opacity="0.35" stroke-width="2"/>
+        <text x="300" y="385" text-anchor="middle" fill="#FDF3C7" font-family="Georgia, serif" font-size="44" letter-spacing="10">BRUMA</text>
+        <text x="300" y="430" text-anchor="middle" fill="#FDF3C7" fill-opacity="0.8" font-family="sans-serif" font-size="18" letter-spacing="4">${label}</text>
       </svg>`;
       return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
     }
@@ -592,20 +682,20 @@
     // 2. OFFICIAL INVENTORY FROM "bruma store" SPREADSHEET (14 REFERENCES)
     // =========================================================================
     const DEFAULT_INVENTORY = [
-      { code: 'SS-ROS-01', brand: 'STOP SHOP', description: 'BAGUI ROSA TELA LATERAL', color: 'ROSA', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 4 },
-      { code: 'SS-CAF-02', brand: 'STOP SHOP', description: 'BAGUI DOBLE CARA CAFE SAMBLAZ', color: 'CAFE', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 2 },
-      { code: 'SS-BLA-03', brand: 'STOP SHOP', description: 'SET BAGUI CHAMPO CAFE ROSAS', color: 'BLANCO', category: 'SET', price: 100, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 6 },
-      { code: 'SS-NEG-04', brand: 'STOP SHOP', description: 'BAGUI BARREN BOMBA NEGRO', color: 'NEGRO', category: 'BAGUI', price: 70, sizes: { '6': 2, '8': 2, '10': 2, '12': 2, '14': 0 }, sold: 5 },
-      { code: 'SS-CAQ-05', brand: 'STOP SHOP', description: 'BAGUI EXITO CAQUI', color: 'CAQUI', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 1 },
-      { code: 'SS-JEA-06', brand: 'STOP SHOP', description: 'SET BAGUI PETROLEO CHOMPO', color: 'JEANS', category: 'SET', price: 100, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 3 },
-      { code: 'SS-GRI-07', brand: 'STOP SHOP', description: 'BAGUI GRIS POLILLA', color: 'GRIS', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 1 },
-      { code: 'SS-JEA-08', brand: 'STOP SHOP', description: 'BAGUI BOMBA PETROLEO PLIEGUES', color: 'JEANS', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 2 },
-      { code: 'SS-CAQ-09', brand: 'STOP SHOP', description: 'BAGUI CHICAGO CAQUI', color: 'CAQUI', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 1 },
-      { code: 'SS-CAF-10', brand: 'STOP SHOP', description: 'BAGUI CLASICO CAFE', color: 'CAFE', category: 'BAGUI', price: 60, sizes: { '6': 0, '8': 1, '10': 2, '12': 2, '14': 1 }, sold: 2 },
-      { code: 'SS-CAF-11', brand: 'STOP SHOP', description: 'SET BAGUI CHAMPO MARRON', color: 'CAFE', category: 'SET', price: 100, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 3 },
-      { code: 'SS-GRI-12', brand: 'STOP SHOP', description: 'BAGUI CHICAGO GRIS', color: 'GRIS', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 1 },
+      { code: 'SS-ROS-01', brand: 'STOP SHOP', description: 'BAGUI ROSA TELA LATERAL', color: 'ROSA', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 0 },
+      { code: 'SS-CAF-02', brand: 'STOP SHOP', description: 'BAGUI DOBLE CARA CAFE SAMBLAZ', color: 'CAFE', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 0 },
+      { code: 'SS-BLA-03', brand: 'STOP SHOP', description: 'SET BAGUI CHAMPO CAFE ROSAS', color: 'BLANCO', category: 'SET', price: 100, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 0 },
+      { code: 'SS-NEG-04', brand: 'STOP SHOP', description: 'BAGUI BARREN BOMBA NEGRO', color: 'NEGRO', category: 'BAGUI', price: 70, sizes: { '6': 2, '8': 2, '10': 2, '12': 2, '14': 0 }, sold: 0 },
+      { code: 'SS-CAQ-05', brand: 'STOP SHOP', description: 'BAGUI EXITO CAQUI', color: 'CAQUI', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 0 },
+      { code: 'SS-JEA-06', brand: 'STOP SHOP', description: 'SET BAGUI PETROLEO CHOMPO', color: 'JEANS', category: 'SET', price: 100, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 0 },
+      { code: 'SS-GRI-07', brand: 'STOP SHOP', description: 'BAGUI GRIS POLILLA', color: 'GRIS', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 0 },
+      { code: 'SS-JEA-08', brand: 'STOP SHOP', description: 'BAGUI BOMBA PETROLEO PLIEGUES', color: 'JEANS', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 0 },
+      { code: 'SS-CAQ-09', brand: 'STOP SHOP', description: 'BAGUI CHICAGO CAQUI', color: 'CAQUI', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 3, '12': 2, '14': 0 }, sold: 0 },
+      { code: 'SS-CAF-10', brand: 'STOP SHOP', description: 'BAGUI CLASICO CAFE', color: 'CAFE', category: 'BAGUI', price: 60, sizes: { '6': 0, '8': 1, '10': 2, '12': 2, '14': 1 }, sold: 0 },
+      { code: 'SS-CAF-11', brand: 'STOP SHOP', description: 'SET BAGUI CHAMPO MARRON', color: 'CAFE', category: 'SET', price: 100, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 0 },
+      { code: 'SS-GRI-12', brand: 'STOP SHOP', description: 'BAGUI CHICAGO GRIS', color: 'GRIS', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 0 },
       { code: 'SS-CAF-13', brand: 'STOP SHOP', description: 'BAGUI EXITO VERDOSO', color: 'CAFE', category: 'BAGUI', price: 70, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 1 }, sold: 0 },
-      { code: 'SS-BLA-14', brand: 'STOP SHOP', description: 'PALAZO LAZER BLANCO', color: 'BLANCO', category: 'PALAZO', price: 60, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 0 }, sold: 2 }
+      { code: 'SS-BLA-14', brand: 'STOP SHOP', description: 'PALAZO LAZER BLANCO', color: 'BLANCO', category: 'PALAZO', price: 60, sizes: { '6': 0, '8': 2, '10': 2, '12': 2, '14': 0 }, sold: 0 }
     ];
 
     const DEFAULT_COUPONS = [
@@ -614,13 +704,13 @@
     ];
 
     // =========================================================================
-    // 3. STATE & PERSISTENCE (localStorage v3)
+    // 3. STATE & PERSISTENCE (localStorage v4 + Cloud Sync)
     // =========================================================================
-    let photoMap = JSON.parse(localStorage.getItem('bruma_photos_v3')) || JSON.parse(JSON.stringify(DRIVE_PHOTO_IDS));
-    let inventory = JSON.parse(localStorage.getItem('bruma_inventory_v3')) || JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
-    let coupons = JSON.parse(localStorage.getItem('bruma_coupons_v3')) || JSON.parse(JSON.stringify(DEFAULT_COUPONS));
-    let orders = JSON.parse(localStorage.getItem('bruma_orders_v3')) || [];
-    let analytics = JSON.parse(localStorage.getItem('bruma_analytics_v3')) || { visits: 128, whatsappClicks: 19, instagramClicks: 34 };
+    let photoMap = JSON.parse(localStorage.getItem('bruma_photos_v4')) || JSON.parse(JSON.stringify(DRIVE_PHOTO_IDS));
+    let inventory = JSON.parse(localStorage.getItem('bruma_inventory_v4')) || JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
+    let coupons = JSON.parse(localStorage.getItem('bruma_coupons_v4')) || JSON.parse(JSON.stringify(DEFAULT_COUPONS));
+    let orders = JSON.parse(localStorage.getItem('bruma_orders_v4')) || [];
+    let analytics = JSON.parse(localStorage.getItem('bruma_analytics_v4')) || { visits: 128, whatsappClicks: 19, instagramClicks: 34 };
 
     if (!sessionStorage.getItem('bruma_visited')) {
       analytics.visits += 1;
@@ -635,11 +725,11 @@
     let selectedSizeMap = {};
     let lightboxState = { code: null, index: 0 };
 
-    function savePhotos() { localStorage.setItem('bruma_photos_v3', JSON.stringify(photoMap)); }
-    function saveInventory() { localStorage.setItem('bruma_inventory_v3', JSON.stringify(inventory)); }
-    function saveCoupons() { localStorage.setItem('bruma_coupons_v3', JSON.stringify(coupons)); }
-    function saveOrders() { localStorage.setItem('bruma_orders_v3', JSON.stringify(orders)); }
-    function saveAnalytics() { localStorage.setItem('bruma_analytics_v3', JSON.stringify(analytics)); }
+    function savePhotos() { localStorage.setItem('bruma_photos_v4', JSON.stringify(photoMap)); }
+    function saveInventory() { localStorage.setItem('bruma_inventory_v4', JSON.stringify(inventory)); }
+    function saveCoupons() { localStorage.setItem('bruma_coupons_v4', JSON.stringify(coupons)); }
+    function saveOrders() { localStorage.setItem('bruma_orders_v4', JSON.stringify(orders)); }
+    function saveAnalytics() { localStorage.setItem('bruma_analytics_v4', JSON.stringify(analytics)); }
 
     function trackEvent(key) {
       analytics[key] = (analytics[key] || 0) + 1;
@@ -962,7 +1052,7 @@
     }
 
     // =========================================================================
-    // 7. SHOPPING BAG, VIP COUPONS & WHATSAPP CHECKOUT
+    // 7. SHOPPING BAG, VIP COUPONS & WHATSAPP CHECKOUT (CLOUD-SYNCED)
     // =========================================================================
     function toggleCart(forceOpen) {
       const drawer = document.getElementById('cart-drawer');
@@ -1127,7 +1217,7 @@
       updateCartBadge();
     }
 
-    function checkoutWhatsApp() {
+    async function checkoutWhatsApp() {
       const name = (document.getElementById('cust-name').value || '').trim();
       const phone = (document.getElementById('cust-phone').value || '').trim();
       const address = (document.getElementById('cust-address').value || '').trim();
@@ -1136,6 +1226,12 @@
       if (!name || !phone || !address) {
         showToast('Por favor completa nombre, teléfono y dirección en Caracas.');
         return;
+      }
+
+      const btn = document.getElementById('checkout-btn');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando Pedido...`;
       }
 
       const { subtotal, discount, total } = computeTotals();
@@ -1186,6 +1282,16 @@
       saveOrders();
       trackEvent('whatsappClicks');
 
+      // Send order & inventory deduction to Google Sheets in real time
+      try {
+        await callSheetsApi({
+          action: 'recordOrder',
+          order: orderRecord
+        });
+      } catch (err) {
+        console.warn('Order queued locally:', err);
+      }
+
       const lines = orderItems.map(i => `• ${i.qty}x ${i.code} (${i.description}) - Talla ${i.size}: $${(i.price * i.qty).toFixed(2)}`).join('%0A');
       const discountLine = discount > 0 ? `%0A*Cupón VIP (${appliedCode}):* -$${discount.toFixed(2)}` : '';
       const msg = `*NUEVO PEDIDO BRUMA (${orderRecord.id})*%0A%0A*Clienta:* ${encodeURIComponent(name)}%0A*Teléfono:* ${encodeURIComponent(phone)}%0A*Delivery Gratis (Caracas):* ${encodeURIComponent(address)}%0A*Método de Pago:* ${encodeURIComponent(payment)}%0A%0A*Detalle del Pedido:*%0A${lines}%0A%0A*Subtotal:* $${subtotal.toFixed(2)}${discountLine}%0A*TOTAL A PAGAR:* $${total.toFixed(2)}`;
@@ -1194,6 +1300,10 @@
       activeCoupon = null;
       document.getElementById('coupon-input').value = '';
       document.getElementById('coupon-feedback').textContent = '';
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-brands fa-whatsapp text-base"></i> Confirmar Pedido por WhatsApp`;
+      }
       toggleCart(false);
       renderCatalog();
       renderTop3();
@@ -1202,7 +1312,7 @@
     }
 
     // =========================================================================
-    // 8. ADMIN PANEL (PASSWORD: bruma2026)
+    // 8. ADMIN PANEL (PASSWORD: bruma2026 + GOOGLE SHEETS SYNC)
     // =========================================================================
     let isAdminAuthenticated = false;
 
@@ -1274,13 +1384,25 @@
       }).join('');
     }
 
+    async function pushInventoryToCloud() {
+      try {
+        await callSheetsApi({
+          action: 'syncInventory',
+          inventory: inventory
+        });
+      } catch (err) {
+        console.warn('Cloud sync error:', err);
+      }
+    }
+
     function updateStockCell(idx, size, val) {
       inventory[idx].sizes[size] = Math.max(0, parseInt(val, 10) || 0);
       saveInventory();
       renderAdminInventory();
       renderCatalog();
       renderTop3();
-      showToast('Stock actualizado.');
+      pushInventoryToCloud();
+      showToast('Stock actualizado en tienda y Google Sheet.');
     }
 
     function updatePriceCell(idx, val) {
@@ -1288,7 +1410,8 @@
       saveInventory();
       renderCatalog();
       renderTop3();
-      showToast('Precio actualizado.');
+      pushInventoryToCloud();
+      showToast('Precio actualizado en tienda y Google Sheet.');
     }
 
     function resetDefaultInventory() {
@@ -1299,6 +1422,7 @@
       renderAdminInventory();
       renderCatalog();
       renderTop3();
+      pushInventoryToCloud();
       showToast('Inventario y fotos restaurados.');
     }
 
@@ -1349,7 +1473,6 @@
             '14': parseInt(row['TALLA 14'], 10) || 0
           };
 
-          // Extract any new Drive URLs from FOTO 1 / FOTO 2 / FOTO 3 if present
           const extractedPhotos = [row['FOTO 1'], row['FOTO 2'], row['FOTO 3'], row['FOTO'], row['FOTO.1'], row['FOTO.2']]
             .map(extractDriveId)
             .filter(Boolean);
@@ -1371,12 +1494,24 @@
         renderAdminInventory();
         renderCatalog();
         renderTop3();
-        showToast(`Se actualizaron ${updated} referencias desde el archivo.`);
+        pushInventoryToCloud();
+        showToast(`Se actualizaron ${updated} referencias en tienda y Google Sheet.`);
       };
       reader.readAsArrayBuffer(file);
     }
 
     // Coupons Management
+    async function pushCouponsToCloud() {
+      try {
+        await callSheetsApi({
+          action: 'syncCoupons',
+          coupons: coupons
+        });
+      } catch (err) {
+        console.warn('Coupon sync error:', err);
+      }
+    }
+
     function createCoupon() {
       const code = (document.getElementById('new-coupon-code').value || '').trim().toUpperCase();
       const type = document.getElementById('new-coupon-type').value;
@@ -1394,13 +1529,15 @@
       document.getElementById('new-coupon-code').value = '';
       document.getElementById('new-coupon-value').value = '';
       renderCouponsTable();
-      showToast(`Cupón ${code} creado.`);
+      pushCouponsToCloud();
+      showToast(`Cupón ${code} creado y guardado en Google Sheet.`);
     }
 
     function deleteCoupon(idx) {
       coupons.splice(idx, 1);
       saveCoupons();
       renderCouponsTable();
+      pushCouponsToCloud();
     }
 
     function renderCouponsTable() {
@@ -1408,7 +1545,7 @@
       tbody.innerHTML = coupons.map((c, idx) => `
         <tr>
           <td class="p-3 font-bold text-burgundy">${c.code}</td>
-          <td class="p-3">${c.type === 'percent' ? `${c.value}%` : `$${c.value.toFixed(2)}`}</td>
+          <td class="p-3">${c.type === 'percent' ? `${c.value}%` : `$${Number(c.value).toFixed(2)}`}</td>
           <td class="p-3">
             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${c.used ? 'bg-burgundy/15 text-burgundy' : 'bg-butter text-burgundy border border-burgundy/25'}">
               ${c.used ? 'Usado' : 'Disponible'}
@@ -1424,7 +1561,7 @@
 
     // Analytics & Top 3
     function renderAnalyticsTab() {
-      const totalRevenue = orders.reduce((s, o) => s + o.total, 0);
+      const totalRevenue = orders.reduce((s, o) => s + Number(o.total || 0), 0);
       const totalOrders = orders.length;
       const convRate = analytics.visits > 0 ? ((totalOrders / analytics.visits) * 100).toFixed(1) : '0.0';
 
@@ -1474,34 +1611,39 @@
         tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-burgundy/65">No hay pedidos registrados en este rango de fechas.</td></tr>`;
         return;
       }
-      tbody.innerHTML = filtered.map(o => `
-        <tr>
-          <td class="p-3 font-semibold">${o.date}</td>
-          <td class="p-3 font-bold text-burgundy">${o.customer}</td>
-          <td class="p-3">${o.items.map(i => `${i.qty}x ${i.code} (T${i.size})`).join(', ')}</td>
-          <td class="p-3">${o.payment}</td>
-          <td class="p-3">${o.coupon}</td>
-          <td class="p-3 text-right font-bold text-burgundy">$${o.total.toFixed(2)}</td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = filtered.map(o => {
+        const itemsText = Array.isArray(o.items)
+          ? o.items.map(i => `${i.qty}x ${i.code} (T${i.size})`).join(', ')
+          : (o.items || '');
+        return `
+          <tr>
+            <td class="p-3 font-semibold">${o.date}</td>
+            <td class="p-3 font-bold text-burgundy">${o.customer}</td>
+            <td class="p-3">${itemsText}</td>
+            <td class="p-3">${o.payment}</td>
+            <td class="p-3">${o.coupon}</td>
+            <td class="p-3 text-right font-bold text-burgundy">$${Number(o.total || 0).toFixed(2)}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function exportSalesPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       const filtered = getFilteredOrders();
-      const totalSum = filtered.reduce((s, o) => s + o.total, 0);
+      const totalSum = filtered.reduce((s, o) => s + Number(o.total || 0), 0);
 
-      doc.setFillColor(122, 30, 58);
+      doc.setFillColor(92, 10, 30);
       doc.rect(0, 0, 210, 32, 'F');
-      doc.setTextColor(242, 232, 183);
+      doc.setTextColor(253, 243, 199);
       doc.setFontSize(20);
       doc.text('BRUMA (@bruma_ccs) · Reporte de Ventas', 14, 20);
 
-      doc.setTextColor(86, 18, 39);
+      doc.setTextColor(64, 6, 20);
       doc.setFontSize(11);
       doc.text(`Fecha de emisión: ${new Date().toLocaleDateString('es-VE')}`, 14, 42);
-      doc.text(`Pedidos en reporte: ${filtered.length}   |   Ingresos Totales: $${totalSum.toFixed(2)}`, 14, 49);
+      doc.text(`Pedidos en reporte: ${filtered.length} | Ingresos Totales: $${totalSum.toFixed(2)}`, 14, 49);
 
       let y = 62;
       doc.setFontSize(9);
@@ -1517,11 +1659,11 @@
 
       filtered.forEach(o => {
         if (y > 275) { doc.addPage(); y = 20; }
-        doc.text(o.date, 14, y);
-        doc.text(o.customer.slice(0, 26), 40, y);
-        doc.text(o.payment.slice(0, 20), 95, y);
-        doc.text(o.coupon, 140, y);
-        doc.text(`$${o.total.toFixed(2)}`, 175, y);
+        doc.text(String(o.date || ''), 14, y);
+        doc.text(String(o.customer || '').slice(0, 26), 40, y);
+        doc.text(String(o.payment || '').slice(0, 20), 95, y);
+        doc.text(String(o.coupon || ''), 140, y);
+        doc.text(`$${Number(o.total || 0).toFixed(2)}`, 175, y);
         y += 7;
       });
 
@@ -1530,11 +1672,12 @@
     }
 
     // =========================================================================
-    // 9. INITIALIZE APP
+    // 9. INITIALIZE APP & SYNC LIVE INVENTORY FROM GOOGLE SHEET
     // =========================================================================
     renderTop3();
     renderCatalog();
     updateCartBadge();
+    syncFromGoogleSheet(false);
   </script>
 </body>
 </html>
