@@ -115,7 +115,7 @@
     </div>
   </section>
 
-  <!-- Top 3 Best Sellers Section (Dynamic) -->
+  <!-- Top 3 Best Sellers Section (Dynamic from real sales + inventory sold) -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
     <div class="bg-butter-light rounded-3xl p-5 sm:p-6 shadow-sm border border-burgundy/15">
       <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
@@ -382,15 +382,18 @@
               </button>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button onclick="exportBackupJSON()" title="Descargar copia de seguridad de facturas e inventario" class="bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-3 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
-                <i class="fa-solid fa-download mr-1"></i> Exportar Respaldo
+              <button onclick="exportBackupJSON()" title="Descargar copia de seguridad completa en archivo JSON" class="bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-3 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
+                <i class="fa-solid fa-download mr-1"></i> Respaldo JSON
               </button>
-              <label title="Cargar copia de seguridad desde otro dispositivo" class="bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-3 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
-                <i class="fa-solid fa-upload mr-1"></i> Importar Respaldo
+              <label title="Cargar copia de seguridad JSON desde otro dispositivo" class="bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-3 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
+                <i class="fa-solid fa-upload mr-1"></i> Restaurar JSON
                 <input type="file" accept=".json" onchange="importBackupJSON(event)" class="hidden">
               </label>
-              <button onclick="syncFromGoogleSheet(true)" class="bg-burgundy text-butter hover:bg-burgundy-light px-3.5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
-                <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Sincronizar Sheet
+              <button onclick="pushFullBackupToCloud(true)" title="Guardar todas tus ventas e inventario en la nube de Google Sheets" class="bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-3 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
+                <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Respaldar en Nube
+              </button>
+              <button onclick="syncFromGoogleSheet(true)" title="Traer las ventas e inventario guardados en Google Sheets" class="bg-burgundy text-butter hover:bg-burgundy-light px-3.5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
+                <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Sincronizar Nube
               </button>
             </div>
           </div>
@@ -400,7 +403,7 @@
             <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h4 class="text-sm font-bold text-burgundy">Sincronización en la Nube &amp; Hoja de Cálculo (.xlsx / .csv)</h4>
-                <p class="text-xs text-burgundy/75 mt-0.5">Cada cambio en la tabla, venta o anulación de factura actualiza automáticamente el stock.</p>
+                <p class="text-xs text-burgundy/75 mt-0.5">Cada cambio en la tabla, venta o anulación de factura actualiza el stock y se respalda en la nube.</p>
               </div>
               <div class="flex flex-wrap items-center gap-2">
                 <button onclick="downloadExcelTemplate()" class="bg-butter border border-burgundy/30 text-burgundy hover:bg-burgundy hover:text-butter px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer">
@@ -486,26 +489,46 @@
             </div>
           </div>
 
-          <!-- TAB 4: PDF SALES REPORTS & INVOICE DELETION -->
+          <!-- TAB 4: PDF SALES REPORTS (MONTHLY + DAILY FILTER) & INVOICE DELETION -->
           <div id="admin-tab-reports" class="hidden space-y-5">
-            <div class="bg-butter-light p-5 rounded-2xl border border-burgundy/15 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-              <div class="flex flex-wrap items-end gap-3">
-                <div>
-                  <label class="block text-[11px] font-bold uppercase text-burgundy mb-1">Desde</label>
-                  <input type="date" id="report-start-date" onchange="renderOrdersTable()" class="bg-white border border-burgundy/20 rounded-xl px-3.5 py-2 text-xs text-burgundy">
+            <!-- Quick Period & Specific Day Filter Bar -->
+            <div class="bg-butter-light p-5 rounded-2xl border border-burgundy/15 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-burgundy/10 pb-3">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-burgundy mr-1">Vista Rápida:</span>
+                  <button onclick="setReportPreset('TODAY')" id="preset-btn-TODAY" class="report-preset-btn bg-white text-burgundy border border-burgundy/20 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer">Hoy</button>
+                  <button onclick="setReportPreset('YESTERDAY')" id="preset-btn-YESTERDAY" class="report-preset-btn bg-white text-burgundy border border-burgundy/20 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer">Ayer</button>
+                  <button onclick="setReportPreset('MONTH')" id="preset-btn-MONTH" class="report-preset-btn bg-burgundy text-butter px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer">Este Mes</button>
+                  <button onclick="setReportPreset('ALL')" id="preset-btn-ALL" class="report-preset-btn bg-white text-burgundy border border-burgundy/20 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer">Todo el Historial</button>
                 </div>
-                <div>
-                  <label class="block text-[11px] font-bold uppercase text-burgundy mb-1">Hasta</label>
-                  <input type="date" id="report-end-date" onchange="renderOrdersTable()" class="bg-white border border-burgundy/20 rounded-xl px-3.5 py-2 text-xs text-burgundy">
-                </div>
+                <span id="active-period-label" class="text-xs font-bold text-burgundy bg-butter px-3 py-1 rounded-full border border-burgundy/15">
+                  Mostrando: Ventas del Mes
+                </span>
               </div>
-              <div class="flex flex-wrap items-center gap-2">
-                <button onclick="openManualOrderModal()" class="bg-butter border border-burgundy/30 text-burgundy hover:bg-burgundy hover:text-butter px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5">
-                  <i class="fa-solid fa-plus"></i> Registrar Venta Manual
-                </button>
-                <button onclick="exportSalesPDF()" class="bg-burgundy text-butter px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-burgundy-light transition-all shadow cursor-pointer flex items-center gap-2">
-                  <i class="fa-solid fa-file-arrow-down"></i> Reporte PDF (Productos y Ventas)
-                </button>
+
+              <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+                <div class="flex flex-wrap items-end gap-3">
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-burgundy mb-1"><i class="fa-solid fa-calendar-day mr-1"></i>Día Específico</label>
+                    <input type="date" id="report-exact-day" onchange="applyExactDayFilter()" class="bg-white border border-burgundy/25 rounded-xl px-3.5 py-2 text-xs font-semibold text-burgundy">
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-burgundy mb-1">Desde</label>
+                    <input type="date" id="report-start-date" onchange="clearExactDayAndRender()" class="bg-white border border-burgundy/20 rounded-xl px-3.5 py-2 text-xs text-burgundy">
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-burgundy mb-1">Hasta</label>
+                    <input type="date" id="report-end-date" onchange="clearExactDayAndRender()" class="bg-white border border-burgundy/20 rounded-xl px-3.5 py-2 text-xs text-burgundy">
+                  </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <button onclick="openManualOrderModal()" class="bg-butter border border-burgundy/30 text-burgundy hover:bg-burgundy hover:text-butter px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> Registrar Venta Manual
+                  </button>
+                  <button onclick="exportSalesPDF()" class="bg-burgundy text-butter px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-burgundy-light transition-all shadow cursor-pointer flex items-center gap-2">
+                    <i class="fa-solid fa-file-arrow-down"></i> Reporte PDF (Productos y Ventas)
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -565,7 +588,7 @@
     </div>
   </div>
 
-  <!-- Manual Sale Registration Modal (for past WhatsApp sales) -->
+  <!-- Manual Sale Registration Modal (for registering yesterday's or WhatsApp sales) -->
   <div id="manual-order-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="fixed inset-0 bg-burgundy-dark/80 backdrop-blur-sm" onclick="closeManualOrderModal()"></div>
     <div class="relative min-h-screen flex items-center justify-center p-4">
@@ -636,9 +659,33 @@
 
   <script>
     // =========================================================================
-    // 0. GOOGLE APPS SCRIPT CLOUD API ("bruma store" REAL-TIME SYNC)
+    // 0. GOOGLE APPS SCRIPT CLOUD API & CARACAS DATE HELPERS
     // =========================================================================
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0VPgHK1F4Wuwc1D8_SKpSpKfFDX7sRohKPp26BSuJ0uXaIlk6w4Iwg-1b1x7kpZN_rA/exec';
+
+    function getCaracasDateString(offsetDays = 0) {
+      const d = new Date(Date.now() + offsetDays * 86400000);
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Caracas',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).formatToParts(d);
+      const y = parts.find(p => p.type === 'year').value;
+      const m = parts.find(p => p.type === 'month').value;
+      const day = parts.find(p => p.type === 'day').value;
+      return `${y}-${m}-${day}`;
+    }
+
+    function getCaracasMonthBounds() {
+      const today = getCaracasDateString(0);
+      const [y, m] = today.split('-');
+      const lastDay = new Date(Number(y), Number(m), 0).getDate();
+      return {
+        start: `${y}-${m}-01`,
+        end: `${y}-${m}-${String(lastDay).padStart(2, '0')}`
+      };
+    }
 
     function setSyncBadge(state, text) {
       const badge = document.getElementById('sync-status-badge');
@@ -662,6 +709,23 @@
       return await res.json();
     }
 
+    async function pushFullBackupToCloud(notify = false) {
+      if (!APPS_SCRIPT_URL) return;
+      try {
+        // Send each local order that might not yet be in Google Sheets
+        for (const ord of orders) {
+          await callSheetsApi({ action: 'new_order', order: ord }).catch(() => {});
+        }
+        // Sync inventory rows
+        for (const it of inventory) {
+          await callSheetsApi({ action: 'update_stock', item: it }).catch(() => {});
+        }
+        if (notify) showToast('Respaldo enviado a Google Sheets.');
+      } catch (e) {
+        if (notify) showToast('No se pudo conectar con la nube.');
+      }
+    }
+
     async function syncFromGoogleSheet(notify = false) {
       if (!APPS_SCRIPT_URL) {
         setSyncBadge('local', 'Catálogo activo');
@@ -672,8 +736,25 @@
         const res = await fetch(`${APPS_SCRIPT_URL}?action=getData&t=${Date.now()}`);
         const data = await res.json();
         if (data && (data.ok || data.status === 'ok')) {
+          if (Array.isArray(data.orders) && data.orders.length > 0) {
+            const existingMap = new Map(orders.map(o => [String(o.id), o]));
+            data.orders.forEach(cloudOrd => {
+              const idStr = String(cloudOrd.id);
+              if (!existingMap.has(idStr)) {
+                existingMap.set(idStr, {
+                  ...cloudOrd,
+                  date: String(cloudOrd.date || '').slice(0, 10)
+                });
+              }
+            });
+            orders = Array.from(existingMap.values()).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+            saveOrders();
+          }
+
           if (Array.isArray(data.inventory) && data.inventory.length > 0) {
+            const soldFromOrders = computeSoldCountsFromOrders(orders);
             inventory = data.inventory.map(item => {
+              const code = String(item.code || '').trim().toUpperCase();
               const desc = String(item.description || '').toUpperCase();
               const cat = item.category || (desc.includes('SET') ? 'SET' : desc.includes('PALAZO') ? 'PALAZO' : 'BAGUI');
               const szObj = item.sizes || {
@@ -683,8 +764,10 @@
                 '12': item.t12 ?? 0,
                 '14': item.t14 ?? 0
               };
+              const sheetSold = Number(item.sold) || 0;
+              const orderSold = soldFromOrders[code] || 0;
               return {
-                code: String(item.code || '').trim().toUpperCase(),
+                code,
                 brand: item.brand || 'STOP SHOP',
                 description: item.description || '',
                 color: item.color || '',
@@ -697,21 +780,19 @@
                   '12': Number(szObj['12']) || 0,
                   '14': Number(szObj['14']) || 0
                 },
-                sold: Number(item.sold) || 0
+                sold: Math.max(sheetSold, orderSold)
               };
             });
             saveInventory();
+          } else {
+            syncSoldCountersWithOrders();
           }
+
           if (Array.isArray(data.coupons) && data.coupons.length > 0) {
             coupons = data.coupons;
             saveCoupons();
           }
-          if (Array.isArray(data.orders) && data.orders.length > 0) {
-            const cloudIds = new Set(data.orders.map(o => String(o.id)));
-            const localOnly = orders.filter(o => !cloudIds.has(String(o.id)));
-            orders = [...data.orders, ...localOnly];
-            saveOrders();
-          }
+
           renderTop3();
           renderCatalog();
           if (isAdminAuthenticated) {
@@ -721,7 +802,7 @@
             renderOrdersTable();
           }
           setSyncBadge('ok', 'Stock en vivo');
-          if (notify) showToast('Inventario sincronizado con Google Sheet.');
+          if (notify) showToast('Inventario y ventas sincronizados con Google Sheet.');
         } else {
           setSyncBadge('local', 'Catálogo activo');
         }
@@ -823,7 +904,7 @@
     ];
 
     // =========================================================================
-    // 3. STATE & PERSISTENCE (Preserves all existing localStorage keys!)
+    // 3. STATE, AUTOMATIC MIRROR BACKUP & REAL-TIME TOP 3 SYNC
     // =========================================================================
     function readFirstAvailableStorage(keys, fallback) {
       for (const k of keys) {
@@ -840,10 +921,10 @@
       return JSON.parse(JSON.stringify(fallback));
     }
 
-    let photoMap = readFirstAvailableStorage(['bruma_photos_v4', 'bruma_photos_v3'], DRIVE_PHOTO_IDS);
-    let inventory = readFirstAvailableStorage(['bruma_inventory_v4', 'bruma_inventory_v3', 'bruma_inventory_v2'], DEFAULT_INVENTORY);
-    let coupons = readFirstAvailableStorage(['bruma_coupons_v4', 'bruma_coupons_v3', 'bruma_coupons_v2'], DEFAULT_COUPONS);
-    let orders = readFirstAvailableStorage(['bruma_orders_v4', 'bruma_orders_v3', 'bruma_orders_v2'], []);
+    let photoMap = readFirstAvailableStorage(['bruma_photos_v4', 'bruma_photos_v3', 'bruma_backup_mirror_photos'], DRIVE_PHOTO_IDS);
+    let inventory = readFirstAvailableStorage(['bruma_inventory_v4', 'bruma_inventory_v3', 'bruma_inventory_v2', 'bruma_backup_mirror_inventory'], DEFAULT_INVENTORY);
+    let coupons = readFirstAvailableStorage(['bruma_coupons_v4', 'bruma_coupons_v3', 'bruma_coupons_v2', 'bruma_backup_mirror_coupons'], DEFAULT_COUPONS);
+    let orders = readFirstAvailableStorage(['bruma_orders_v4', 'bruma_orders_v3', 'bruma_orders_v2', 'bruma_backup_mirror_orders'], []);
     let analytics = readFirstAvailableStorage(['bruma_analytics_v4', 'bruma_analytics_v3', 'bruma_analytics_v2'], { visits: 128, whatsappClicks: 19, instagramClicks: 34 });
 
     if (!sessionStorage.getItem('bruma_visited')) {
@@ -859,11 +940,25 @@
     let selectedSizeMap = {};
     let lightboxState = { code: null, index: 0 };
 
-    function savePhotos() { localStorage.setItem('bruma_photos_v4', JSON.stringify(photoMap)); }
-    function saveInventory() { localStorage.setItem('bruma_inventory_v4', JSON.stringify(inventory)); }
-    function saveCoupons() { localStorage.setItem('bruma_coupons_v4', JSON.stringify(coupons)); }
-    function saveOrders() { localStorage.setItem('bruma_orders_v4', JSON.stringify(orders)); }
-    function saveAnalytics() { localStorage.setItem('bruma_analytics_v4', JSON.stringify(analytics)); }
+    function savePhotos() {
+      localStorage.setItem('bruma_photos_v4', JSON.stringify(photoMap));
+      localStorage.setItem('bruma_backup_mirror_photos', JSON.stringify(photoMap));
+    }
+    function saveInventory() {
+      localStorage.setItem('bruma_inventory_v4', JSON.stringify(inventory));
+      localStorage.setItem('bruma_backup_mirror_inventory', JSON.stringify(inventory));
+    }
+    function saveCoupons() {
+      localStorage.setItem('bruma_coupons_v4', JSON.stringify(coupons));
+      localStorage.setItem('bruma_backup_mirror_coupons', JSON.stringify(coupons));
+    }
+    function saveOrders() {
+      localStorage.setItem('bruma_orders_v4', JSON.stringify(orders));
+      localStorage.setItem('bruma_backup_mirror_orders', JSON.stringify(orders));
+    }
+    function saveAnalytics() {
+      localStorage.setItem('bruma_analytics_v4', JSON.stringify(analytics));
+    }
 
     function trackEvent(key) {
       analytics[key] = (analytics[key] || 0) + 1;
@@ -882,9 +977,54 @@
       return Object.values(item.sizes).reduce((a, b) => a + Number(b || 0), 0);
     }
 
-    function getTop3Codes() {
+    function parseOrderItems(order) {
+      if (Array.isArray(order.items)) return order.items;
+      const str = String(order.items || '');
+      const regex = /(\d+)\s*x\s*([A-Z0-9-]+)\s*\(T(\d+)\)/gi;
+      const parsed = [];
+      let m;
+      while ((m = regex.exec(str)) !== null) {
+        parsed.push({ qty: parseInt(m[1], 10), code: m[2].toUpperCase(), size: m[3] });
+      }
+      return parsed;
+    }
+
+    function computeSoldCountsFromOrders(orderList) {
+      const counts = {};
+      (orderList || []).forEach(o => {
+        parseOrderItems(o).forEach(it => {
+          const c = String(it.code || '').toUpperCase();
+          if (c) counts[c] = (counts[c] || 0) + Number(it.qty || 1);
+        });
+      });
+      return counts;
+    }
+
+    function syncSoldCountersWithOrders() {
+      const orderCounts = computeSoldCountsFromOrders(orders);
+      inventory.forEach(item => {
+        const fromOrders = orderCounts[item.code.toUpperCase()] || 0;
+        item.sold = fromOrders;
+      });
+      saveInventory();
+    }
+
+    // Recompute sold counters on startup so Top 3 always reflects real orders
+    syncSoldCountersWithOrders();
+
+    function getRankedInventory() {
+      const orderCounts = computeSoldCountsFromOrders(orders);
       return [...inventory]
-        .sort((a, b) => (b.sold || 0) - (a.sold || 0))
+        .map(item => ({
+          ...item,
+          realSold: Math.max(Number(item.sold) || 0, orderCounts[item.code.toUpperCase()] || 0)
+        }))
+        .sort((a, b) => b.realSold - a.realSold);
+    }
+
+    function getTop3Codes() {
+      return getRankedInventory()
+        .filter(item => item.realSold > 0)
         .slice(0, 3)
         .map(item => item.code);
     }
@@ -894,10 +1034,14 @@
     // =========================================================================
     function renderTop3() {
       const container = document.getElementById('top3-container');
-      const topItems = [...inventory].sort((a, b) => (b.sold || 0) - (a.sold || 0)).slice(0, 3);
+      const ranked = getRankedInventory();
+      const topItems = ranked.slice(0, 3);
       container.innerHTML = topItems.map((item, idx) => {
         const photoIds = photoMap[item.code] || [];
         const firstId = photoIds[0] || '';
+        const soldBadge = item.realSold > 0
+          ? `<span class="text-[10px] font-bold text-burgundy bg-butter px-2 py-0.5 rounded-full border border-burgundy/15 ml-1.5">${item.realSold} vend.</span>`
+          : '';
         return `
           <div class="bg-butter rounded-2xl p-3.5 border border-burgundy/15 flex items-center gap-3.5 hover:shadow-md transition-all">
             <div class="relative w-20 h-24 rounded-xl overflow-hidden bg-burgundy/10 shrink-0 cursor-pointer" onclick="openLightbox('${item.code}', 0)">
@@ -905,8 +1049,11 @@
               <span class="absolute top-1.5 left-1.5 bg-burgundy text-butter text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">#${idx + 1}</span>
             </div>
             <div class="min-w-0 flex-1">
-              <span class="text-[10px] font-bold tracking-widest text-burgundy/65 uppercase">${item.code}</span>
-              <h3 class="text-xs sm:text-sm font-bold text-burgundy truncate">${item.description}</h3>
+              <div class="flex items-center">
+                <span class="text-[10px] font-bold tracking-widest text-burgundy/65 uppercase">${item.code}</span>
+                ${soldBadge}
+              </div>
+              <h3 class="text-xs sm:text-sm font-bold text-burgundy truncate mt-0.5">${item.description}</h3>
               <p class="text-[11px] text-burgundy/75 mt-0.5">${item.color} · <strong>$${Number(item.price).toFixed(2)}</strong></p>
               <a href="#card-${item.code}" class="inline-block mt-2 text-[11px] font-bold text-burgundy underline underline-offset-4 hover:opacity-75">
                 Seleccionar talla <i class="fa-solid fa-arrow-right text-[9px] ml-0.5"></i>
@@ -952,7 +1099,7 @@
         const currentSlide = slideIndexMap[item.code] || 0;
         const activePhotoId = photoIds[currentSlide] || photoIds[0] || '';
         const totalStock = getTotalStock(item);
-        const isTop3 = top3Codes.includes(item.code) && (item.sold || 0) > 0;
+        const isTop3 = top3Codes.includes(item.code);
 
         const availableSizes = Object.entries(item.sizes).filter(([, qty]) => qty > 0).map(([sz]) => sz);
         if (!selectedSizeMap[item.code] || !availableSizes.includes(selectedSizeMap[item.code])) {
@@ -1392,14 +1539,14 @@
         const cObj = coupons.find(c => c.code === activeCoupon.code);
         if (cObj) {
           cObj.used = true;
-          cObj.usedBy = `${name} (${new Date().toLocaleDateString('es-VE')})`;
+          cObj.usedBy = `${name} (${getCaracasDateString(0)})`;
           appliedCode = cObj.code;
         }
       }
 
       const orderRecord = {
         id: 'BRM-' + Date.now().toString().slice(-6),
-        date: new Date().toISOString().split('T')[0],
+        date: getCaracasDateString(0),
         customer: name,
         phone,
         address,
@@ -1412,7 +1559,7 @@
       };
 
       orders.unshift(orderRecord);
-      saveInventory();
+      syncSoldCountersWithOrders();
       saveCoupons();
       saveOrders();
       trackEvent('whatsappClicks');
@@ -1446,9 +1593,10 @@
     }
 
     // =========================================================================
-    // 8. ADMIN PANEL (PASSWORD: bruma2026 + DELETE INVOICE + BACKUP/RESTORE)
+    // 8. ADMIN PANEL (PASSWORD: bruma2026 + DAILY/MONTHLY FILTER + BACKUPS)
     // =========================================================================
     let isAdminAuthenticated = false;
+    let currentReportPreset = 'MONTH';
 
     function openAdminModal() {
       document.getElementById('admin-modal').classList.remove('hidden');
@@ -1476,7 +1624,7 @@
       renderAdminInventory();
       renderCouponsTable();
       renderAnalyticsTab();
-      renderOrdersTable();
+      setReportPreset('MONTH');
     }
 
     function switchAdminTab(tab) {
@@ -1552,7 +1700,7 @@
       if (!confirm('¿Restaurar todo el inventario a las cantidades originales de fábrica?')) return;
       inventory = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
       photoMap = JSON.parse(JSON.stringify(DRIVE_PHOTO_IDS));
-      saveInventory();
+      syncSoldCountersWithOrders();
       savePhotos();
       renderAdminInventory();
       renderCatalog();
@@ -1708,38 +1856,100 @@
         </div>
       `;
 
-      const sorted = [...inventory].sort((a, b) => (b.sold || 0) - (a.sold || 0)).slice(0, 5);
+      const sorted = getRankedInventory().slice(0, 5);
       document.getElementById('admin-top3-list').innerHTML = sorted.map((it, idx) => `
         <div class="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-burgundy/10 text-xs">
           <span><strong class="text-burgundy">#${idx + 1} ${it.code}</strong> · ${it.description}</span>
-          <span class="font-bold text-burgundy">${it.sold || 0} unid. vendidas</span>
+          <span class="font-bold text-burgundy">${it.realSold} unid. vendidas</span>
         </div>
       `).join('');
     }
 
     // =========================================================================
-    // 8B. ORDERS, SOLD PRODUCTS BREAKDOWN, DELETE INVOICE, MANUAL & BACKUP
+    // 8B. DAILY & MONTHLY REPORT FILTERS, AGGREGATION, DELETE & BACKUP
     // =========================================================================
+    function updatePresetButtonsUI(activeKey) {
+      currentReportPreset = activeKey;
+      ['TODAY', 'YESTERDAY', 'MONTH', 'ALL'].forEach(k => {
+        const btn = document.getElementById(`preset-btn-${k}`);
+        if (!btn) return;
+        btn.className = k === activeKey
+          ? 'report-preset-btn bg-burgundy text-butter px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer'
+          : 'report-preset-btn bg-white text-burgundy border border-burgundy/20 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer';
+      });
+    }
+
+    function setReportPreset(preset) {
+      updatePresetButtonsUI(preset);
+      const exactInput = document.getElementById('report-exact-day');
+      const startInput = document.getElementById('report-start-date');
+      const endInput = document.getElementById('report-end-date');
+      const label = document.getElementById('active-period-label');
+
+      if (preset === 'TODAY') {
+        const d = getCaracasDateString(0);
+        exactInput.value = d;
+        startInput.value = d;
+        endInput.value = d;
+        label.textContent = `Mostrando: Día de Hoy (${d})`;
+      } else if (preset === 'YESTERDAY') {
+        const d = getCaracasDateString(-1);
+        exactInput.value = d;
+        startInput.value = d;
+        endInput.value = d;
+        label.textContent = `Mostrando: Día de Ayer (${d})`;
+      } else if (preset === 'MONTH') {
+        const bounds = getCaracasMonthBounds();
+        exactInput.value = '';
+        startInput.value = bounds.start;
+        endInput.value = bounds.end;
+        label.textContent = `Mostrando: Ventas del Mes (${bounds.start} al ${bounds.end})`;
+      } else {
+        exactInput.value = '';
+        startInput.value = '';
+        endInput.value = '';
+        label.textContent = 'Mostrando: Todo el Historial';
+      }
+      renderOrdersTable();
+    }
+
+    function applyExactDayFilter() {
+      const exact = document.getElementById('report-exact-day').value;
+      const startInput = document.getElementById('report-start-date');
+      const endInput = document.getElementById('report-end-date');
+      const label = document.getElementById('active-period-label');
+      updatePresetButtonsUI('');
+
+      if (exact) {
+        startInput.value = exact;
+        endInput.value = exact;
+        label.textContent = `Mostrando: Día Específico (${exact})`;
+      } else {
+        label.textContent = 'Mostrando: Rango Personalizado';
+      }
+      renderOrdersTable();
+    }
+
+    function clearExactDayAndRender() {
+      document.getElementById('report-exact-day').value = '';
+      updatePresetButtonsUI('');
+      const s = document.getElementById('report-start-date').value;
+      const e = document.getElementById('report-end-date').value;
+      document.getElementById('active-period-label').textContent = (s || e)
+        ? `Mostrando: ${s || 'Inicio'} al ${e || 'Hoy'}`
+        : 'Mostrando: Todo el Historial';
+      renderOrdersTable();
+    }
+
     function getFilteredOrders() {
       const start = document.getElementById('report-start-date').value;
       const end = document.getElementById('report-end-date').value;
       return orders.filter(o => {
-        if (start && o.date < start) return false;
-        if (end && o.date > end) return false;
+        const d = String(o.date || '').slice(0, 10);
+        if (start && d < start) return false;
+        if (end && d > end) return false;
         return true;
       });
-    }
-
-    function parseOrderItems(order) {
-      if (Array.isArray(order.items)) return order.items;
-      const str = String(order.items || '');
-      const regex = /(\d+)\s*x\s*([A-Z0-9-]+)\s*\(T(\d+)\)/gi;
-      const parsed = [];
-      let m;
-      while ((m = regex.exec(str)) !== null) {
-        parsed.push({ qty: parseInt(m[1], 10), code: m[2].toUpperCase(), size: m[3] });
-      }
-      return parsed;
     }
 
     function buildSoldProductsAggregation(orderList) {
@@ -1802,7 +2012,6 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
         const prod = inventory.find(p => p.code.toUpperCase() === String(it.code).toUpperCase());
         if (prod && it.size) {
           prod.sizes[String(it.size)] = (Number(prod.sizes[String(it.size)]) || 0) + Number(it.qty || 1);
-          prod.sold = Math.max(0, (Number(prod.sold) || 0) - Number(it.qty || 1));
           pushInventoryRowToCloud(prod);
         }
       });
@@ -1816,8 +2025,8 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
       }
 
       orders.splice(idx, 1);
+      syncSoldCountersWithOrders();
       saveOrders();
-      saveInventory();
       saveCoupons();
 
       callSheetsApi({ action: 'delete_order', orderId: order.id, items: itemsToRestore }).catch(() => {});
@@ -1892,9 +2101,9 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
       }).join('');
     }
 
-    // Manual Order Modal (for registering past WhatsApp sales)
+    // Manual Order Modal (defaults to yesterday's date so she can quickly recover yesterday's sales if needed)
     function openManualOrderModal() {
-      document.getElementById('manual-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('manual-date').value = getCaracasDateString(-1);
       document.getElementById('manual-customer').value = '';
       document.getElementById('manual-qty').value = 1;
       const sel = document.getElementById('manual-code');
@@ -1907,7 +2116,7 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
     }
 
     function saveManualOrder() {
-      const date = document.getElementById('manual-date').value || new Date().toISOString().split('T')[0];
+      const date = document.getElementById('manual-date').value || getCaracasDateString(0);
       const customer = (document.getElementById('manual-customer').value || '').trim();
       const code = document.getElementById('manual-code').value;
       const size = document.getElementById('manual-size').value;
@@ -1926,7 +2135,6 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
       const subtotal = item.price * qty;
       if (deduct) {
         item.sizes[size] = Math.max(0, (Number(item.sizes[size]) || 0) - qty);
-        item.sold = (Number(item.sold) || 0) + qty;
         pushInventoryRowToCloud(item);
       }
 
@@ -1945,8 +2153,8 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
       };
 
       orders.unshift(orderRecord);
+      syncSoldCountersWithOrders();
       saveOrders();
-      saveInventory();
       callSheetsApi({ action: 'new_order', order: orderRecord }).catch(() => {});
 
       closeManualOrderModal();
@@ -1955,7 +2163,7 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
       renderAnalyticsTab();
       renderCatalog();
       renderTop3();
-      showToast(`Venta ${orderRecord.id} agregada al reporte.`);
+      showToast(`Venta ${orderRecord.id} guardada y Top 3 actualizado.`);
     }
 
     // Export & Import JSON Backup across devices
@@ -1971,10 +2179,10 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Respaldo_BRUMA_${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `Respaldo_BRUMA_${getCaracasDateString(0)}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast('Respaldo descargado.');
+      showToast('Respaldo JSON descargado.');
     }
 
     function importBackupJSON(event) {
@@ -1988,13 +2196,15 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
           if (Array.isArray(data.orders)) { orders = data.orders; saveOrders(); }
           if (Array.isArray(data.coupons)) { coupons = data.coupons; saveCoupons(); }
           if (data.analytics) { analytics = data.analytics; saveAnalytics(); }
+          syncSoldCountersWithOrders();
           renderAdminInventory();
           renderCouponsTable();
           renderAnalyticsTab();
           renderOrdersTable();
           renderCatalog();
           renderTop3();
-          showToast('Respaldo restaurado correctamente.');
+          pushFullBackupToCloud(false);
+          showToast('Respaldo restaurado y sincronizado.');
         } catch (err) {
           showToast('Archivo de respaldo inválido.');
         }
@@ -2006,8 +2216,10 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       const filtered = getFilteredOrders();
+      const exactDay = document.getElementById('report-exact-day').value;
       const start = document.getElementById('report-start-date').value || 'Inicio';
       const end = document.getElementById('report-end-date').value || 'Hoy';
+      const periodText = exactDay ? `Día específico: ${exactDay}` : `Período: ${start} al ${end}`;
       const totalSum = filtered.reduce((s, o) => s + Number(o.total || 0), 0);
       const { productList, paymentStats, totalUnitsSold } = buildSoldProductsAggregation(filtered);
 
@@ -2020,7 +2232,7 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
       doc.text('BRUMA (@bruma_ccs) · Reporte de Ventas y Productos', 14, 16);
       doc.setFontSize(9.5);
       doc.setFont(undefined, 'normal');
-      doc.text(`Período: ${start} al ${end}   |   Emitido: ${new Date().toLocaleDateString('es-VE')}`, 14, 25);
+      doc.text(`${periodText}   |   Emitido: ${getCaracasDateString(0)}`, 14, 25);
 
       // Executive Summary Strip
       doc.setFillColor(249, 243, 214);
@@ -2151,8 +2363,9 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
         y += 6.8;
       });
 
-      doc.save(`Reporte_Productos_Ventas_BRUMA_${new Date().toISOString().split('T')[0]}.pdf`);
-      showToast('Reporte PDF completo descargado.');
+      const fileTag = exactDay ? exactDay : `${start}_a_${end}`;
+      doc.save(`Reporte_BRUMA_${fileTag}.pdf`);
+      showToast('Reporte PDF descargado.');
     }
 
     // =========================================================================
