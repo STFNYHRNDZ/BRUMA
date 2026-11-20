@@ -52,6 +52,9 @@
     <span id="sync-status-badge" class="bg-butter/10 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-normal normal-case border border-butter/20">
       <i class="fa-solid fa-rotate fa-spin mr-1"></i>Conectando...
     </span>
+    <button onclick="openQuickPdfModal()" class="bg-butter text-burgundy hover:bg-butter-light px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase shadow-sm transition-all cursor-pointer">
+      <i class="fa-solid fa-file-pdf mr-1"></i> Reporte PDF
+    </button>
     <button onclick="openAdminModal()" class="bg-butter/15 hover:bg-butter/25 px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border border-butter/30 transition-all cursor-pointer">
       <i class="fa-solid fa-lock mr-1"></i> Panel Admin
     </button>
@@ -70,6 +73,12 @@
       </div>
 
       <div class="flex items-center gap-2.5 sm:gap-3">
+        <!-- Quick PDF Report Trigger -->
+        <button onclick="openQuickPdfModal()" class="hidden md:flex items-center gap-2 bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>Reporte PDF</span>
+        </button>
+
         <!-- Shop the Look Button -->
         <button onclick="openLookModal()" class="hidden sm:flex items-center gap-2 bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer">
           <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -195,9 +204,14 @@
       </div>
       <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-butter/75">
         <p>&copy; 2026 BRUMA (@bruma_ccs). Todos los derechos reservados.</p>
-        <button onclick="openAdminModal()" class="text-butter/75 hover:text-butter underline underline-offset-4 cursor-pointer">
-          Acceso Administrativo
-        </button>
+        <div class="flex items-center gap-4">
+          <button onclick="openQuickPdfModal()" class="text-butter/85 hover:text-butter underline underline-offset-4 cursor-pointer">
+            Descargar Reporte PDF
+          </button>
+          <button onclick="openAdminModal()" class="text-butter/75 hover:text-butter underline underline-offset-4 cursor-pointer">
+            Acceso Administrativo
+          </button>
+        </div>
       </div>
     </div>
   </footer>
@@ -239,6 +253,61 @@
         <div id="look-bundles-container" class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
           <!-- Populated dynamically -->
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick PDF Report Modal (Accessible WITHOUT entering Admin Password) -->
+  <div id="quick-pdf-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="fixed inset-0 bg-burgundy-dark/80 backdrop-blur-sm" onclick="closeQuickPdfModal()"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-butter border border-burgundy/25 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl space-y-5 animate-fade-in">
+        <div class="flex items-center justify-between border-b border-burgundy/15 pb-3.5">
+          <div>
+            <span class="text-[10px] uppercase tracking-[0.25em] text-burgundy/60 font-bold block">Descarga Directa</span>
+            <h3 class="font-editorial text-2xl sm:text-3xl font-bold text-burgundy">Reporte PDF de Ventas</h3>
+          </div>
+          <button onclick="closeQuickPdfModal()" class="w-9 h-9 rounded-full bg-burgundy/10 text-burgundy hover:bg-burgundy hover:text-butter flex items-center justify-center transition-colors cursor-pointer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <p class="text-xs text-burgundy/80 leading-relaxed">
+          Descarga directamente el reporte ejecutivo en PDF con el resumen de productos vendidos por talla, cierre por método de pago y facturas del período — sin necesidad de clave.
+        </p>
+
+        <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15 space-y-3">
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="setQuickPdfPreset('TODAY')" id="qpdf-btn-TODAY" class="qpdf-preset-btn bg-white text-burgundy border border-burgundy/20 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer">Hoy</button>
+            <button onclick="setQuickPdfPreset('YESTERDAY')" id="qpdf-btn-YESTERDAY" class="qpdf-preset-btn bg-white text-burgundy border border-burgundy/20 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer">Ayer</button>
+            <button onclick="setQuickPdfPreset('MONTH')" id="qpdf-btn-MONTH" class="qpdf-preset-btn bg-burgundy text-butter px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer">Este Mes</button>
+            <button onclick="setQuickPdfPreset('ALL')" id="qpdf-btn-ALL" class="qpdf-preset-btn bg-white text-burgundy border border-burgundy/20 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer">Todo el Historial</button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-xs">
+            <div>
+              <label class="block text-[10px] font-bold uppercase text-burgundy mb-1">Día Específico</label>
+              <input type="date" id="qpdf-exact-day" onchange="applyQuickPdfExactDay()" class="w-full bg-white border border-burgundy/25 rounded-xl px-2.5 py-2 text-xs font-semibold text-burgundy">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase text-burgundy mb-1">Desde</label>
+              <input type="date" id="qpdf-start-date" onchange="updateQuickPdfSummary()" class="w-full bg-white border border-burgundy/20 rounded-xl px-2.5 py-2 text-xs text-burgundy">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase text-burgundy mb-1">Hasta</label>
+              <input type="date" id="qpdf-end-date" onchange="updateQuickPdfSummary()" class="w-full bg-white border border-burgundy/20 rounded-xl px-2.5 py-2 text-xs text-burgundy">
+            </div>
+          </div>
+
+          <div id="qpdf-preview-box" class="bg-butter rounded-xl p-3 border border-burgundy/15 flex items-center justify-between text-xs">
+            <span class="text-burgundy/80 font-medium">Facturas en período: <strong id="qpdf-count" class="text-burgundy">0</strong></span>
+            <span class="text-burgundy font-bold">Total: <span id="qpdf-total">$0.00</span></span>
+          </div>
+        </div>
+
+        <button onclick="downloadQuickSalesPDF()" class="w-full bg-burgundy text-butter py-3.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-burgundy-light transition-all shadow-lg cursor-pointer flex items-center justify-center gap-2">
+          <i class="fa-solid fa-file-arrow-down text-sm"></i> Descargar Reporte PDF Ahora
+        </button>
       </div>
     </div>
   </div>
@@ -354,13 +423,18 @@
           </div>
           <div>
             <h3 class="font-editorial text-3xl font-bold text-burgundy">Acceso Restringido</h3>
-            <p class="text-xs text-burgundy/75 mt-1">Ingresa la clave administrativa de BRUMA para gestionar inventario, cupones y reportes.</p>
+            <p class="text-xs text-burgundy/75 mt-1">Ingresa la clave administrativa de BRUMA para gestionar inventario, editar formas de pago o anular facturas.</p>
           </div>
           <input type="password" id="admin-password-input" onkeydown="if(event.key==='Enter') verifyAdminPassword()" placeholder="Contraseña administrativa" class="w-full bg-white border border-burgundy/25 rounded-full px-5 py-3 text-sm text-center text-burgundy focus:outline-none focus:ring-2 focus:ring-burgundy">
           <p id="admin-login-error" class="text-xs text-burgundy font-semibold hidden">Contraseña incorrecta. Intenta nuevamente.</p>
-          <button onclick="verifyAdminPassword()" class="w-full bg-burgundy text-butter py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-burgundy-light transition-all shadow cursor-pointer">
-            Ingresar al Panel
-          </button>
+          <div class="flex flex-col gap-2.5">
+            <button onclick="verifyAdminPassword()" class="w-full bg-burgundy text-butter py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-burgundy-light transition-all shadow cursor-pointer">
+              Ingresar al Panel
+            </button>
+            <button type="button" onclick="closeAdminModal(); openQuickPdfModal();" class="w-full bg-butter-light border border-burgundy/25 text-burgundy py-2.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-white transition-all cursor-pointer flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-file-pdf"></i> Descargar Reporte PDF sin clave
+            </button>
+          </div>
         </div>
 
         <!-- Authenticated Admin Workspace -->
@@ -489,7 +563,7 @@
             </div>
           </div>
 
-          <!-- TAB 4: PDF SALES REPORTS (MONTHLY + DAILY FILTER) & INVOICE DELETION -->
+          <!-- TAB 4: PDF SALES REPORTS (MONTHLY + DAILY FILTER) & INVOICE EDIT/DELETION -->
           <div id="admin-tab-reports" class="hidden space-y-5">
             <!-- Quick Period & Specific Day Filter Bar -->
             <div class="bg-butter-light p-5 rounded-2xl border border-burgundy/15 space-y-4">
@@ -563,24 +637,31 @@
               </div>
             </div>
 
-            <!-- Chronological Invoices Table -->
-            <div class="overflow-x-auto bg-white rounded-2xl border border-burgundy/15">
-              <table class="w-full text-left text-xs">
-                <thead>
-                  <tr class="bg-burgundy text-butter uppercase text-[11px]">
-                    <th class="p-3">ID / Fecha</th>
-                    <th class="p-3">Cliente</th>
-                    <th class="p-3">Prendas</th>
-                    <th class="p-3">Método Pago</th>
-                    <th class="p-3">Cupón</th>
-                    <th class="p-3 text-right">Total ($)</th>
-                    <th class="p-3 text-center">Acción</th>
-                  </tr>
-                </thead>
-                <tbody id="admin-orders-tbody" class="divide-y divide-burgundy/10">
-                  <!-- Orders rendered via JS -->
-                </tbody>
-              </table>
+            <!-- Chronological Invoices Table with Editable Payment Method -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between px-1">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-burgundy">
+                  <i class="fa-solid fa-receipt mr-1.5"></i> Facturas Registradas (Puedes cambiar el método de pago directamente en cada fila)
+                </h4>
+              </div>
+              <div class="overflow-x-auto bg-white rounded-2xl border border-burgundy/15">
+                <table class="w-full text-left text-xs">
+                  <thead>
+                    <tr class="bg-burgundy text-butter uppercase text-[11px]">
+                      <th class="p-3">ID / Fecha</th>
+                      <th class="p-3">Cliente</th>
+                      <th class="p-3">Prendas</th>
+                      <th class="p-3">Método Pago (Editable)</th>
+                      <th class="p-3">Cupón</th>
+                      <th class="p-3 text-right">Total ($)</th>
+                      <th class="p-3 text-center">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-orders-tbody" class="divide-y divide-burgundy/10">
+                    <!-- Orders rendered via JS -->
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -663,6 +744,23 @@
     // =========================================================================
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0VPgHK1F4Wuwc1D8_SKpSpKfFDX7sRohKPp26BSuJ0uXaIlk6w4Iwg-1b1x7kpZN_rA/exec';
 
+    const PAYMENT_OPTIONS = [
+      'Pago Móvil',
+      'Zelle',
+      'Binance Pay (USDT)',
+      'Efectivo ($)'
+    ];
+
+    function normalizePaymentMethod(raw) {
+      const val = String(raw || '').trim();
+      const upper = val.toUpperCase();
+      if (upper.includes('ZELLE')) return 'Zelle';
+      if (upper.includes('BINANCE') || upper.includes('USDT')) return 'Binance Pay (USDT)';
+      if (upper.includes('EFECTIVO') || upper.includes('CASH')) return 'Efectivo ($)';
+      if (upper.includes('PAGO') || upper.includes('MOVIL') || upper.includes('MÓVIL')) return 'Pago Móvil';
+      return val || 'Pago Móvil';
+    }
+
     function getCaracasDateString(offsetDays = 0) {
       const d = new Date(Date.now() + offsetDays * 86400000);
       const parts = new Intl.DateTimeFormat('en-CA', {
@@ -712,11 +810,9 @@
     async function pushFullBackupToCloud(notify = false) {
       if (!APPS_SCRIPT_URL) return;
       try {
-        // Send each local order that might not yet be in Google Sheets
         for (const ord of orders) {
           await callSheetsApi({ action: 'new_order', order: ord }).catch(() => {});
         }
-        // Sync inventory rows
         for (const it of inventory) {
           await callSheetsApi({ action: 'update_stock', item: it }).catch(() => {});
         }
@@ -743,6 +839,7 @@
               if (!existingMap.has(idStr)) {
                 existingMap.set(idStr, {
                   ...cloudOrd,
+                  payment: normalizePaymentMethod(cloudOrd.payment),
                   date: String(cloudOrd.date || '').slice(0, 10)
                 });
               }
@@ -800,6 +897,9 @@
             renderCouponsTable();
             renderAnalyticsTab();
             renderOrdersTable();
+          }
+          if (!document.getElementById('quick-pdf-modal').classList.contains('hidden')) {
+            updateQuickPdfSummary();
           }
           setSyncBadge('ok', 'Stock en vivo');
           if (notify) showToast('Inventario y ventas sincronizados con Google Sheet.');
@@ -1009,7 +1109,6 @@
       saveInventory();
     }
 
-    // Recompute sold counters on startup so Top 3 always reflects real orders
     syncSoldCountersWithOrders();
 
     function getRankedInventory() {
@@ -1109,7 +1208,6 @@
 
         return `
           <article id="card-${item.code}" class="bg-butter-light rounded-3xl overflow-hidden border border-burgundy/15 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group">
-            <!-- Photo Carousel Container -->
             <div class="relative aspect-[3/4] bg-burgundy/10 overflow-hidden">
               <img
                 id="img-${item.code}"
@@ -1121,7 +1219,6 @@
                 class="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 group-hover:scale-[1.03]"
               >
 
-              <!-- Top Badges -->
               <div class="absolute top-3 left-3 flex flex-col gap-1.5 pointer-events-none">
                 <span class="bg-burgundy/90 backdrop-blur-sm text-butter text-[10px] font-bold tracking-widest px-2.5 py-1 rounded-full uppercase">
                   ${item.code}
@@ -1129,12 +1226,10 @@
                 ${isTop3 ? `<span class="bg-butter text-burgundy text-[10px] font-bold px-2.5 py-1 rounded-full shadow border border-burgundy/20"><i class="fa-solid fa-fire mr-1"></i>Top Ventas</span>` : ''}
               </div>
 
-              <!-- Zoom Hint Icon -->
               <button onclick="openLightbox('${item.code}', ${currentSlide})" title="Ampliar foto" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-butter/85 text-burgundy flex items-center justify-center text-xs shadow hover:bg-butter transition-all cursor-pointer">
                 <i class="fa-solid fa-expand"></i>
               </button>
 
-              <!-- Carousel Arrows (only if > 1 photo) -->
               ${photoIds.length > 1 ? `
                 <button onclick="changeSlide('${item.code}', -1)" aria-label="Foto anterior" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-butter/85 hover:bg-butter text-burgundy flex items-center justify-center text-xs shadow-md transition-all cursor-pointer">
                   <i class="fa-solid fa-chevron-left"></i>
@@ -1142,7 +1237,6 @@
                 <button onclick="changeSlide('${item.code}', 1)" aria-label="Foto siguiente" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-butter/85 hover:bg-butter text-burgundy flex items-center justify-center text-xs shadow-md transition-all cursor-pointer">
                   <i class="fa-solid fa-chevron-right"></i>
                 </button>
-                <!-- Dots Indicator -->
                 <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-burgundy/75 backdrop-blur-sm px-2.5 py-1 rounded-full">
                   ${photoIds.map((_, i) => `
                     <button onclick="setSlide('${item.code}', ${i})" class="w-2 h-2 rounded-full transition-all cursor-pointer ${i === currentSlide ? 'bg-butter w-4' : 'bg-butter/40'}"></button>
@@ -1151,7 +1245,6 @@
               ` : ''}
             </div>
 
-            <!-- Card Details -->
             <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
               <div>
                 <div class="flex items-center justify-between gap-2 text-[11px] text-burgundy/70 font-semibold uppercase tracking-wider">
@@ -1162,7 +1255,6 @@
                 <p class="font-editorial text-2xl font-bold text-burgundy mt-1">$${Number(item.price).toFixed(2)}</p>
               </div>
 
-              <!-- Size Selector -->
               <div class="space-y-2.5">
                 <div class="flex items-center justify-between text-[11px]">
                   <span class="font-semibold text-burgundy/80 uppercase tracking-wider">Talla:</span>
@@ -1330,6 +1422,93 @@
         showToast(`Se agregaron ${addedCount} piezas del look a tu bolsa.`);
         toggleCart(true);
       }
+    }
+
+    // =========================================================================
+    // 6B. QUICK PDF REPORT MODAL (NO PASSWORD REQUIRED)
+    // =========================================================================
+    function openQuickPdfModal() {
+      document.getElementById('quick-pdf-modal').classList.remove('hidden');
+      setQuickPdfPreset('MONTH');
+    }
+
+    function closeQuickPdfModal() {
+      document.getElementById('quick-pdf-modal').classList.add('hidden');
+    }
+
+    function updateQuickPdfButtons(activeKey) {
+      ['TODAY', 'YESTERDAY', 'MONTH', 'ALL'].forEach(k => {
+        const btn = document.getElementById(`qpdf-btn-${k}`);
+        if (!btn) return;
+        btn.className = k === activeKey
+          ? 'qpdf-preset-btn bg-burgundy text-butter px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer'
+          : 'qpdf-preset-btn bg-white text-burgundy border border-burgundy/20 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer';
+      });
+    }
+
+    function setQuickPdfPreset(preset) {
+      updateQuickPdfButtons(preset);
+      const exactInput = document.getElementById('qpdf-exact-day');
+      const startInput = document.getElementById('qpdf-start-date');
+      const endInput = document.getElementById('qpdf-end-date');
+
+      if (preset === 'TODAY') {
+        const d = getCaracasDateString(0);
+        exactInput.value = d;
+        startInput.value = d;
+        endInput.value = d;
+      } else if (preset === 'YESTERDAY') {
+        const d = getCaracasDateString(-1);
+        exactInput.value = d;
+        startInput.value = d;
+        endInput.value = d;
+      } else if (preset === 'MONTH') {
+        const bounds = getCaracasMonthBounds();
+        exactInput.value = '';
+        startInput.value = bounds.start;
+        endInput.value = bounds.end;
+      } else {
+        exactInput.value = '';
+        startInput.value = '';
+        endInput.value = '';
+      }
+      updateQuickPdfSummary();
+    }
+
+    function applyQuickPdfExactDay() {
+      const exact = document.getElementById('qpdf-exact-day').value;
+      updateQuickPdfButtons('');
+      if (exact) {
+        document.getElementById('qpdf-start-date').value = exact;
+        document.getElementById('qpdf-end-date').value = exact;
+      }
+      updateQuickPdfSummary();
+    }
+
+    function getQuickFilteredOrders() {
+      const start = document.getElementById('qpdf-start-date').value;
+      const end = document.getElementById('qpdf-end-date').value;
+      return orders.filter(o => {
+        const d = String(o.date || '').slice(0, 10);
+        if (start && d < start) return false;
+        if (end && d > end) return false;
+        return true;
+      });
+    }
+
+    function updateQuickPdfSummary() {
+      const filtered = getQuickFilteredOrders();
+      const total = filtered.reduce((s, o) => s + Number(o.total || 0), 0);
+      document.getElementById('qpdf-count').textContent = filtered.length;
+      document.getElementById('qpdf-total').textContent = `$${total.toFixed(2)}`;
+    }
+
+    function downloadQuickSalesPDF() {
+      const filtered = getQuickFilteredOrders();
+      const exactDay = document.getElementById('qpdf-exact-day').value;
+      const start = document.getElementById('qpdf-start-date').value || 'Inicio';
+      const end = document.getElementById('qpdf-end-date').value || 'Hoy';
+      generatePdfDocument(filtered, exactDay, start, end);
     }
 
     // =========================================================================
@@ -1593,7 +1772,7 @@
     }
 
     // =========================================================================
-    // 8. ADMIN PANEL (PASSWORD: bruma2026 + DAILY/MONTHLY FILTER + BACKUPS)
+    // 8. ADMIN PANEL (PASSWORD: bruma2026 + EDIT PAYMENT METHOD + DELETE)
     // =========================================================================
     let isAdminAuthenticated = false;
     let currentReportPreset = 'MONTH';
@@ -1866,7 +2045,7 @@
     }
 
     // =========================================================================
-    // 8B. DAILY & MONTHLY REPORT FILTERS, AGGREGATION, DELETE & BACKUP
+    // 8B. DAILY & MONTHLY REPORT FILTERS, PAYMENT METHOD EDIT, DELETE & BACKUP
     // =========================================================================
     function updatePresetButtonsUI(activeKey) {
       currentReportPreset = activeKey;
@@ -1958,7 +2137,7 @@
       let totalUnitsSold = 0;
 
       orderList.forEach(o => {
-        const payKey = String(o.payment || 'Otro').trim();
+        const payKey = normalizePaymentMethod(o.payment);
         paymentStats[payKey] = (paymentStats[payKey] || 0) + Number(o.total || 0);
 
         const parsedItems = parseOrderItems(o);
@@ -1994,6 +2173,22 @@
         paymentStats,
         totalUnitsSold
       };
+    }
+
+    function updateOrderPayment(orderId, newPayment) {
+      const idx = orders.findIndex(o => String(o.id) === String(orderId));
+      if (idx === -1) return;
+      orders[idx].payment = newPayment;
+      saveOrders();
+
+      callSheetsApi({
+        action: 'update_order_payment',
+        orderId: orders[idx].id,
+        payment: newPayment
+      }).catch(() => {});
+
+      renderOrdersTable();
+      showToast(`Pago de ${orders[idx].id} actualizado a ${newPayment}.`);
     }
 
     function deleteOrder(orderId) {
@@ -2080,6 +2275,10 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
         const itemsText = Array.isArray(o.items)
           ? o.items.map(i => `${i.qty}x ${i.code} (T${i.size})`).join(', ')
           : (o.items || '');
+        const currentPay = normalizePaymentMethod(o.payment);
+        const optionsHtml = PAYMENT_OPTIONS.map(opt =>
+          `<option value="${opt}" ${opt === currentPay ? 'selected' : ''}>${opt}</option>`
+        ).join('');
         return `
           <tr class="hover:bg-butter-light/60">
             <td class="p-3">
@@ -2088,7 +2287,11 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
             </td>
             <td class="p-3 font-bold text-burgundy">${o.customer}</td>
             <td class="p-3">${itemsText}</td>
-            <td class="p-3">${o.payment}</td>
+            <td class="p-3">
+              <select onchange="updateOrderPayment('${o.id}', this.value)" class="bg-butter-light border border-burgundy/25 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-burgundy focus:outline-none focus:ring-2 focus:ring-burgundy/40 cursor-pointer">
+                ${optionsHtml}
+              </select>
+            </td>
             <td class="p-3">${o.coupon || 'Ninguno'}</td>
             <td class="p-3 text-right font-bold text-burgundy">$${Number(o.total || 0).toFixed(2)}</td>
             <td class="p-3 text-center">
@@ -2213,12 +2416,16 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
     }
 
     function exportSalesPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
       const filtered = getFilteredOrders();
       const exactDay = document.getElementById('report-exact-day').value;
       const start = document.getElementById('report-start-date').value || 'Inicio';
       const end = document.getElementById('report-end-date').value || 'Hoy';
+      generatePdfDocument(filtered, exactDay, start, end);
+    }
+
+    function generatePdfDocument(filtered, exactDay, start, end) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
       const periodText = exactDay ? `Día específico: ${exactDay}` : `Período: ${start} al ${end}`;
       const totalSum = filtered.reduce((s, o) => s + Number(o.total || 0), 0);
       const { productList, paymentStats, totalUnitsSold } = buildSoldProductsAggregation(filtered);
@@ -2356,7 +2563,7 @@ Las prendas de este pedido volverán automáticamente al inventario.`)) {
         doc.text(`${o.id || ''} (${o.date || ''})`, 16, y);
         doc.text(String(o.customer || '').slice(0, 20), 52, y);
         doc.text(itemsText.slice(0, 30), 92, y);
-        doc.text(String(o.payment || '').slice(0, 17), 148, y);
+        doc.text(normalizePaymentMethod(o.payment).slice(0, 17), 148, y);
         doc.setFont(undefined, 'bold');
         doc.text(`$${Number(o.total || 0).toFixed(2)}`, 180, y);
         doc.setFont(undefined, 'normal');
