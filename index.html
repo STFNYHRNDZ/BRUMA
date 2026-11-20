@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Evita bloqueos de Google Drive CDN por cabecera Referer en Netlify o local -->
+  <!-- Evita bloqueos de Google Drive CDN por cabecera Referer en GitHub Pages o local -->
   <meta name="referrer" content="no-referrer">
   <title>BRUMA · Colección Exclusiva (@bruma_ccs)</title>
   <!-- Tailwind CSS -->
@@ -13,12 +13,12 @@
       theme: {
         extend: {
           colors: {
-            burgundy: '#5C0A1E',
-            'burgundy-dark': '#400614',
-            'burgundy-light': '#7A122B',
-            butter: '#FDF3C7',
-            'butter-light': '#FEF9E3',
-            'butter-dark': '#F5E49E',
+            burgundy: '#7A1E3A',
+            'burgundy-dark': '#561227',
+            'burgundy-light': '#96294A',
+            butter: '#F2E8B7',
+            'butter-light': '#F9F3D6',
+            'butter-dark': '#E6D896',
           },
           fontFamily: {
             serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
@@ -48,7 +48,7 @@
 
   <!-- Top Announcement Bar -->
   <div class="bg-burgundy text-butter text-[11px] sm:text-xs tracking-widest text-center py-2.5 px-4 font-medium uppercase border-b border-burgundy-light flex items-center justify-center gap-3 flex-wrap">
-    <span><i class="fa-solid fa-truck-fast mr-1.5"></i>Delivery Gratis en Caracas · 14 Referencias Oficiales · Pago Móvil, Zelle, Binance & Efectivo</span>
+    <span><i class="fa-solid fa-truck-fast mr-1.5"></i>Delivery Gratis en Caracas · 14 Referencias Oficiales · Pago Móvil, Zelle, Binance &amp; Efectivo</span>
     <span id="sync-status-badge" class="bg-butter/10 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-normal normal-case border border-butter/20">
       <i class="fa-solid fa-rotate fa-spin mr-1"></i>Conectando...
     </span>
@@ -365,7 +365,7 @@
 
         <!-- Authenticated Admin Workspace -->
         <div id="admin-dashboard-view" class="hidden p-5 sm:p-7 space-y-6 max-h-[82vh] overflow-y-auto">
-          <!-- Navigation Tabs -->
+          <!-- Navigation Tabs & Backup Controls -->
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-burgundy/15 pb-4">
             <div class="flex flex-wrap gap-2">
               <button onclick="switchAdminTab('inventory')" id="tab-btn-inventory" class="admin-tab-btn bg-burgundy text-butter px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
@@ -378,12 +378,21 @@
                 <i class="fa-solid fa-chart-pie mr-1.5"></i> Analíticas &amp; Top 3
               </button>
               <button onclick="switchAdminTab('reports')" id="tab-btn-reports" class="admin-tab-btn bg-butter-light text-burgundy border border-burgundy/20 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer">
-                <i class="fa-solid fa-file-pdf mr-1.5"></i> Reportes PDF
+                <i class="fa-solid fa-file-pdf mr-1.5"></i> Facturas &amp; Reportes
               </button>
             </div>
-            <button onclick="syncFromGoogleSheet(true)" class="bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-3.5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
-              <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Sincronizar Google Sheet
-            </button>
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="exportBackupJSON()" title="Descargar copia de seguridad de facturas e inventario" class="bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-3 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
+                <i class="fa-solid fa-download mr-1"></i> Exportar Respaldo
+              </button>
+              <label title="Cargar copia de seguridad desde otro dispositivo" class="bg-butter-light border border-burgundy/25 text-burgundy hover:bg-burgundy hover:text-butter px-3 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
+                <i class="fa-solid fa-upload mr-1"></i> Importar Respaldo
+                <input type="file" accept=".json" onchange="importBackupJSON(event)" class="hidden">
+              </label>
+              <button onclick="syncFromGoogleSheet(true)" class="bg-burgundy text-butter hover:bg-burgundy-light px-3.5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer">
+                <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Sincronizar Sheet
+              </button>
+            </div>
           </div>
 
           <!-- TAB 1: INVENTORY & EXCEL LOADER -->
@@ -391,7 +400,7 @@
             <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h4 class="text-sm font-bold text-burgundy">Sincronización en la Nube &amp; Hoja de Cálculo (.xlsx / .csv)</h4>
-                <p class="text-xs text-burgundy/75 mt-0.5">Cada cambio en la tabla o venta por WhatsApp actualiza automáticamente tu Google Sheet <strong>bruma store</strong>.</p>
+                <p class="text-xs text-burgundy/75 mt-0.5">Cada cambio en la tabla, venta o anulación de factura actualiza automáticamente el stock.</p>
               </div>
               <div class="flex flex-wrap items-center gap-2">
                 <button onclick="downloadExcelTemplate()" class="bg-butter border border-burgundy/30 text-burgundy hover:bg-burgundy hover:text-butter px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer">
@@ -477,7 +486,7 @@
             </div>
           </div>
 
-          <!-- TAB 4: PDF SALES REPORTS -->
+          <!-- TAB 4: PDF SALES REPORTS & INVOICE DELETION -->
           <div id="admin-tab-reports" class="hidden space-y-5">
             <div class="bg-butter-light p-5 rounded-2xl border border-burgundy/15 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div class="flex flex-wrap items-end gap-3">
@@ -490,21 +499,59 @@
                   <input type="date" id="report-end-date" onchange="renderOrdersTable()" class="bg-white border border-burgundy/20 rounded-xl px-3.5 py-2 text-xs text-burgundy">
                 </div>
               </div>
-              <button onclick="exportSalesPDF()" class="bg-burgundy text-butter px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-burgundy-light transition-all shadow cursor-pointer flex items-center gap-2">
-                <i class="fa-solid fa-file-arrow-down"></i> Descargar Reporte PDF
-              </button>
+              <div class="flex flex-wrap items-center gap-2">
+                <button onclick="openManualOrderModal()" class="bg-butter border border-burgundy/30 text-burgundy hover:bg-burgundy hover:text-butter px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5">
+                  <i class="fa-solid fa-plus"></i> Registrar Venta Manual
+                </button>
+                <button onclick="exportSalesPDF()" class="bg-burgundy text-butter px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-burgundy-light transition-all shadow cursor-pointer flex items-center gap-2">
+                  <i class="fa-solid fa-file-arrow-down"></i> Reporte PDF (Productos y Ventas)
+                </button>
+              </div>
             </div>
 
+            <!-- Live Sold Products Summary Table -->
+            <div class="bg-butter-light p-4 rounded-2xl border border-burgundy/15 space-y-3">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-burgundy">
+                  <i class="fa-solid fa-shirt mr-1.5"></i> Resumen de Productos Vendidos en el Período
+                </h4>
+                <span id="sold-products-summary-badge" class="text-[11px] font-bold text-burgundy bg-butter px-3 py-1 rounded-full border border-burgundy/15">0 prendas</span>
+              </div>
+              <div class="overflow-x-auto bg-white rounded-xl border border-burgundy/15">
+                <table class="w-full text-left text-xs">
+                  <thead>
+                    <tr class="bg-burgundy text-butter uppercase text-[10px]">
+                      <th class="p-2.5">Código</th>
+                      <th class="p-2.5">Descripción</th>
+                      <th class="p-2.5 text-center">T6</th>
+                      <th class="p-2.5 text-center">T8</th>
+                      <th class="p-2.5 text-center">T10</th>
+                      <th class="p-2.5 text-center">T12</th>
+                      <th class="p-2.5 text-center">T14</th>
+                      <th class="p-2.5 text-center">Vendidos</th>
+                      <th class="p-2.5 text-center">Stock Rest.</th>
+                      <th class="p-2.5 text-right">Ingresos ($)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-sold-products-tbody" class="divide-y divide-burgundy/10">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Chronological Invoices Table -->
             <div class="overflow-x-auto bg-white rounded-2xl border border-burgundy/15">
               <table class="w-full text-left text-xs">
                 <thead>
                   <tr class="bg-burgundy text-butter uppercase text-[11px]">
-                    <th class="p-3">Fecha</th>
+                    <th class="p-3">ID / Fecha</th>
                     <th class="p-3">Cliente</th>
                     <th class="p-3">Prendas</th>
                     <th class="p-3">Método Pago</th>
                     <th class="p-3">Cupón</th>
                     <th class="p-3 text-right">Total ($)</th>
+                    <th class="p-3 text-center">Acción</th>
                   </tr>
                 </thead>
                 <tbody id="admin-orders-tbody" class="divide-y divide-burgundy/10">
@@ -514,6 +561,69 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Sale Registration Modal (for past WhatsApp sales) -->
+  <div id="manual-order-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="fixed inset-0 bg-burgundy-dark/80 backdrop-blur-sm" onclick="closeManualOrderModal()"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-butter border border-burgundy/25 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-fade-in">
+        <div class="flex items-center justify-between border-b border-burgundy/15 pb-3">
+          <h4 class="font-editorial text-2xl font-bold text-burgundy">Registrar Venta en Reporte</h4>
+          <button onclick="closeManualOrderModal()" class="w-8 h-8 rounded-full bg-burgundy/10 text-burgundy flex items-center justify-center cursor-pointer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-burgundy mb-1">Fecha de la Venta</label>
+            <input type="date" id="manual-date" class="w-full bg-white border border-burgundy/20 rounded-xl px-3.5 py-2 text-burgundy">
+          </div>
+          <div>
+            <label class="block font-bold text-burgundy mb-1">Nombre de la Clienta *</label>
+            <input type="text" id="manual-customer" placeholder="Ej: María Pérez" class="w-full bg-white border border-burgundy/20 rounded-xl px-3.5 py-2 text-burgundy">
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div class="col-span-2">
+              <label class="block font-bold text-burgundy mb-1">Prenda *</label>
+              <select id="manual-code" class="w-full bg-white border border-burgundy/20 rounded-xl px-3 py-2 text-burgundy font-semibold"></select>
+            </div>
+            <div>
+              <label class="block font-bold text-burgundy mb-1">Talla *</label>
+              <select id="manual-size" class="w-full bg-white border border-burgundy/20 rounded-xl px-3 py-2 text-burgundy font-semibold">
+                <option value="6">6</option>
+                <option value="8">8</option>
+                <option value="10" selected>10</option>
+                <option value="12">12</option>
+                <option value="14">14</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-bold text-burgundy mb-1">Cantidad</label>
+              <input type="number" id="manual-qty" value="1" min="1" class="w-full bg-white border border-burgundy/20 rounded-xl px-3.5 py-2 text-burgundy">
+            </div>
+            <div>
+              <label class="block font-bold text-burgundy mb-1">Método de Pago</label>
+              <select id="manual-payment" class="w-full bg-white border border-burgundy/20 rounded-xl px-3 py-2 text-burgundy font-semibold">
+                <option value="Pago Móvil">Pago Móvil</option>
+                <option value="Zelle">Zelle</option>
+                <option value="Binance Pay (USDT)">Binance Pay (USDT)</option>
+                <option value="Efectivo ($)">Efectivo ($)</option>
+              </select>
+            </div>
+          </div>
+          <label class="flex items-center gap-2 text-burgundy/85 pt-1 cursor-pointer">
+            <input type="checkbox" id="manual-deduct-stock" checked class="accent-burgundy">
+            <span>Descontar también del inventario actual</span>
+          </label>
+        </div>
+        <button onclick="saveManualOrder()" class="w-full bg-burgundy text-butter py-3 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-burgundy-light transition-all shadow cursor-pointer">
+          Guardar Factura en Reporte
+        </button>
       </div>
     </div>
   </div>
@@ -538,7 +648,7 @@
       } else if (state === 'ok') {
         badge.innerHTML = `<i class="fa-solid fa-cloud-check mr-1 text-butter-dark"></i>${text || 'Stock en vivo'}`;
       } else {
-        badge.innerHTML = `<i class="fa-solid fa-database mr-1"></i>${text || 'Modo local'}`;
+        badge.innerHTML = `<i class="fa-solid fa-database mr-1"></i>${text || 'Catálogo activo'}`;
       }
     }
 
@@ -554,18 +664,25 @@
 
     async function syncFromGoogleSheet(notify = false) {
       if (!APPS_SCRIPT_URL) {
-        setSyncBadge('local', 'Modo local');
+        setSyncBadge('local', 'Catálogo activo');
         return;
       }
       setSyncBadge('loading', 'Actualizando stock...');
       try {
         const res = await fetch(`${APPS_SCRIPT_URL}?action=getData&t=${Date.now()}`);
         const data = await res.json();
-        if (data && data.ok) {
+        if (data && (data.ok || data.status === 'ok')) {
           if (Array.isArray(data.inventory) && data.inventory.length > 0) {
             inventory = data.inventory.map(item => {
               const desc = String(item.description || '').toUpperCase();
               const cat = item.category || (desc.includes('SET') ? 'SET' : desc.includes('PALAZO') ? 'PALAZO' : 'BAGUI');
+              const szObj = item.sizes || {
+                '6': item.t6 ?? 0,
+                '8': item.t8 ?? 0,
+                '10': item.t10 ?? 0,
+                '12': item.t12 ?? 0,
+                '14': item.t14 ?? 0
+              };
               return {
                 code: String(item.code || '').trim().toUpperCase(),
                 brand: item.brand || 'STOP SHOP',
@@ -574,11 +691,11 @@
                 category: cat,
                 price: Number(item.price) || 70,
                 sizes: {
-                  '6': Number(item.sizes?.['6'] ?? 0),
-                  '8': Number(item.sizes?.['8'] ?? 0),
-                  '10': Number(item.sizes?.['10'] ?? 0),
-                  '12': Number(item.sizes?.['12'] ?? 0),
-                  '14': Number(item.sizes?.['14'] ?? 0)
+                  '6': Number(szObj['6']) || 0,
+                  '8': Number(szObj['8']) || 0,
+                  '10': Number(szObj['10']) || 0,
+                  '12': Number(szObj['12']) || 0,
+                  '14': Number(szObj['14']) || 0
                 },
                 sold: Number(item.sold) || 0
               };
@@ -589,8 +706,10 @@
             coupons = data.coupons;
             saveCoupons();
           }
-          if (Array.isArray(data.orders)) {
-            orders = data.orders;
+          if (Array.isArray(data.orders) && data.orders.length > 0) {
+            const cloudIds = new Set(data.orders.map(o => String(o.id)));
+            const localOnly = orders.filter(o => !cloudIds.has(String(o.id)));
+            orders = [...data.orders, ...localOnly];
             saveOrders();
           }
           renderTop3();
@@ -659,10 +778,10 @@
 
     function makeBrumaPlaceholder(label) {
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
-        <rect width="600" height="800" fill="#5C0A1E"/>
-        <rect x="24" y="24" width="552" height="752" rx="24" fill="none" stroke="#FDF3C7" stroke-opacity="0.35" stroke-width="2"/>
-        <text x="300" y="385" text-anchor="middle" fill="#FDF3C7" font-family="Georgia, serif" font-size="44" letter-spacing="10">BRUMA</text>
-        <text x="300" y="430" text-anchor="middle" fill="#FDF3C7" fill-opacity="0.8" font-family="sans-serif" font-size="18" letter-spacing="4">${label}</text>
+        <rect width="600" height="800" fill="#7A1E3A"/>
+        <rect x="24" y="24" width="552" height="752" rx="24" fill="none" stroke="#F2E8B7" stroke-opacity="0.35" stroke-width="2"/>
+        <text x="300" y="385" text-anchor="middle" fill="#F2E8B7" font-family="Georgia, serif" font-size="44" letter-spacing="10">BRUMA</text>
+        <text x="300" y="430" text-anchor="middle" fill="#F2E8B7" fill-opacity="0.8" font-family="sans-serif" font-size="18" letter-spacing="4">${label}</text>
       </svg>`;
       return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
     }
@@ -704,13 +823,28 @@
     ];
 
     // =========================================================================
-    // 3. STATE & PERSISTENCE (localStorage v4 + Cloud Sync)
+    // 3. STATE & PERSISTENCE (Preserves all existing localStorage keys!)
     // =========================================================================
-    let photoMap = JSON.parse(localStorage.getItem('bruma_photos_v4')) || JSON.parse(JSON.stringify(DRIVE_PHOTO_IDS));
-    let inventory = JSON.parse(localStorage.getItem('bruma_inventory_v4')) || JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
-    let coupons = JSON.parse(localStorage.getItem('bruma_coupons_v4')) || JSON.parse(JSON.stringify(DEFAULT_COUPONS));
-    let orders = JSON.parse(localStorage.getItem('bruma_orders_v4')) || [];
-    let analytics = JSON.parse(localStorage.getItem('bruma_analytics_v4')) || { visits: 128, whatsappClicks: 19, instagramClicks: 34 };
+    function readFirstAvailableStorage(keys, fallback) {
+      for (const k of keys) {
+        const raw = localStorage.getItem(k);
+        if (raw) {
+          try {
+            const parsed = JSON.parse(raw);
+            if (parsed && (Array.isArray(parsed) ? parsed.length > 0 : Object.keys(parsed).length > 0)) {
+              return parsed;
+            }
+          } catch (e) {}
+        }
+      }
+      return JSON.parse(JSON.stringify(fallback));
+    }
+
+    let photoMap = readFirstAvailableStorage(['bruma_photos_v4', 'bruma_photos_v3'], DRIVE_PHOTO_IDS);
+    let inventory = readFirstAvailableStorage(['bruma_inventory_v4', 'bruma_inventory_v3', 'bruma_inventory_v2'], DEFAULT_INVENTORY);
+    let coupons = readFirstAvailableStorage(['bruma_coupons_v4', 'bruma_coupons_v3', 'bruma_coupons_v2'], DEFAULT_COUPONS);
+    let orders = readFirstAvailableStorage(['bruma_orders_v4', 'bruma_orders_v3', 'bruma_orders_v2'], []);
+    let analytics = readFirstAvailableStorage(['bruma_analytics_v4', 'bruma_analytics_v3', 'bruma_analytics_v2'], { visits: 128, whatsappClicks: 19, instagramClicks: 34 });
 
     if (!sessionStorage.getItem('bruma_visited')) {
       analytics.visits += 1;
@@ -741,7 +875,7 @@
       document.getElementById('toast-msg').textContent = msg;
       toast.classList.remove('hidden');
       clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 3200);
+      window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 3400);
     }
 
     function getTotalStock(item) {
@@ -818,7 +952,7 @@
         const currentSlide = slideIndexMap[item.code] || 0;
         const activePhotoId = photoIds[currentSlide] || photoIds[0] || '';
         const totalStock = getTotalStock(item);
-        const isTop3 = top3Codes.includes(item.code);
+        const isTop3 = top3Codes.includes(item.code) && (item.sold || 0) > 0;
 
         const availableSizes = Object.entries(item.sizes).filter(([, qty]) => qty > 0).map(([sz]) => sz);
         if (!selectedSizeMap[item.code] || !availableSizes.includes(selectedSizeMap[item.code])) {
@@ -1229,6 +1363,7 @@
       }
 
       const btn = document.getElementById('checkout-btn');
+      if (btn && btn.disabled) return;
       if (btn) {
         btn.disabled = true;
         btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando Pedido...`;
@@ -1282,10 +1417,9 @@
       saveOrders();
       trackEvent('whatsappClicks');
 
-      // Send order & inventory deduction to Google Sheets in real time
       try {
         await callSheetsApi({
-          action: 'recordOrder',
+          action: 'new_order',
           order: orderRecord
         });
       } catch (err) {
@@ -1312,7 +1446,7 @@
     }
 
     // =========================================================================
-    // 8. ADMIN PANEL (PASSWORD: bruma2026 + GOOGLE SHEETS SYNC)
+    // 8. ADMIN PANEL (PASSWORD: bruma2026 + DELETE INVOICE + BACKUP/RESTORE)
     // =========================================================================
     let isAdminAuthenticated = false;
 
@@ -1384,11 +1518,11 @@
       }).join('');
     }
 
-    async function pushInventoryToCloud() {
+    async function pushInventoryRowToCloud(item) {
       try {
         await callSheetsApi({
-          action: 'syncInventory',
-          inventory: inventory
+          action: 'update_stock',
+          item: item
         });
       } catch (err) {
         console.warn('Cloud sync error:', err);
@@ -1401,8 +1535,8 @@
       renderAdminInventory();
       renderCatalog();
       renderTop3();
-      pushInventoryToCloud();
-      showToast('Stock actualizado en tienda y Google Sheet.');
+      pushInventoryRowToCloud(inventory[idx]);
+      showToast('Stock actualizado.');
     }
 
     function updatePriceCell(idx, val) {
@@ -1410,11 +1544,12 @@
       saveInventory();
       renderCatalog();
       renderTop3();
-      pushInventoryToCloud();
-      showToast('Precio actualizado en tienda y Google Sheet.');
+      pushInventoryRowToCloud(inventory[idx]);
+      showToast('Precio actualizado.');
     }
 
     function resetDefaultInventory() {
+      if (!confirm('¿Restaurar todo el inventario a las cantidades originales de fábrica?')) return;
       inventory = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
       photoMap = JSON.parse(JSON.stringify(DRIVE_PHOTO_IDS));
       saveInventory();
@@ -1422,7 +1557,7 @@
       renderAdminInventory();
       renderCatalog();
       renderTop3();
-      pushInventoryToCloud();
+      inventory.forEach(it => pushInventoryRowToCloud(it));
       showToast('Inventario y fotos restaurados.');
     }
 
@@ -1485,6 +1620,7 @@
             existing.color = row['COLOR'] || existing.color;
             existing.price = price;
             existing.sizes = sizes;
+            pushInventoryRowToCloud(existing);
             updated++;
           }
         });
@@ -1494,24 +1630,12 @@
         renderAdminInventory();
         renderCatalog();
         renderTop3();
-        pushInventoryToCloud();
-        showToast(`Se actualizaron ${updated} referencias en tienda y Google Sheet.`);
+        showToast(`Se actualizaron ${updated} referencias.`);
       };
       reader.readAsArrayBuffer(file);
     }
 
     // Coupons Management
-    async function pushCouponsToCloud() {
-      try {
-        await callSheetsApi({
-          action: 'syncCoupons',
-          coupons: coupons
-        });
-      } catch (err) {
-        console.warn('Coupon sync error:', err);
-      }
-    }
-
     function createCoupon() {
       const code = (document.getElementById('new-coupon-code').value || '').trim().toUpperCase();
       const type = document.getElementById('new-coupon-type').value;
@@ -1524,20 +1648,20 @@
         showToast('Ese código ya existe.');
         return;
       }
-      coupons.unshift({ code, type, value, used: false, usedBy: '' });
+      const newC = { code, type, value, used: false, usedBy: '' };
+      coupons.unshift(newC);
       saveCoupons();
       document.getElementById('new-coupon-code').value = '';
       document.getElementById('new-coupon-value').value = '';
       renderCouponsTable();
-      pushCouponsToCloud();
-      showToast(`Cupón ${code} creado y guardado en Google Sheet.`);
+      callSheetsApi({ action: 'create_coupon', coupon: newC }).catch(() => {});
+      showToast(`Cupón ${code} creado.`);
     }
 
     function deleteCoupon(idx) {
       coupons.splice(idx, 1);
       saveCoupons();
       renderCouponsTable();
-      pushCouponsToCloud();
     }
 
     function renderCouponsTable() {
@@ -1593,7 +1717,9 @@
       `).join('');
     }
 
-    // Orders & PDF Report
+    // =========================================================================
+    // 8B. ORDERS, SOLD PRODUCTS BREAKDOWN, DELETE INVOICE, MANUAL & BACKUP
+    // =========================================================================
     function getFilteredOrders() {
       const start = document.getElementById('report-start-date').value;
       const end = document.getElementById('report-end-date').value;
@@ -1604,11 +1730,141 @@
       });
     }
 
+    function parseOrderItems(order) {
+      if (Array.isArray(order.items)) return order.items;
+      const str = String(order.items || '');
+      const regex = /(\d+)\s*x\s*([A-Z0-9-]+)\s*\(T(\d+)\)/gi;
+      const parsed = [];
+      let m;
+      while ((m = regex.exec(str)) !== null) {
+        parsed.push({ qty: parseInt(m[1], 10), code: m[2].toUpperCase(), size: m[3] });
+      }
+      return parsed;
+    }
+
+    function buildSoldProductsAggregation(orderList) {
+      const productStats = {};
+      const paymentStats = {};
+      let totalUnitsSold = 0;
+
+      orderList.forEach(o => {
+        const payKey = String(o.payment || 'Otro').trim();
+        paymentStats[payKey] = (paymentStats[payKey] || 0) + Number(o.total || 0);
+
+        const parsedItems = parseOrderItems(o);
+        parsedItems.forEach(it => {
+          const code = String(it.code || '').toUpperCase();
+          const size = String(it.size || '');
+          const qty = Number(it.qty || 1);
+          const prod = inventory.find(p => p.code.toUpperCase() === code);
+          const unitPrice = Number(it.price || (prod ? prod.price : 0));
+
+          if (!productStats[code]) {
+            productStats[code] = {
+              code,
+              description: prod ? prod.description : code,
+              color: prod ? prod.color : '',
+              sizes: { '6': 0, '8': 0, '10': 0, '12': 0, '14': 0 },
+              qty: 0,
+              revenue: 0,
+              remaining: prod ? getTotalStock(prod) : 0
+            };
+          }
+          if (size && Object.prototype.hasOwnProperty.call(productStats[code].sizes, size)) {
+            productStats[code].sizes[size] += qty;
+          }
+          productStats[code].qty += qty;
+          productStats[code].revenue += unitPrice * qty;
+          totalUnitsSold += qty;
+        });
+      });
+
+      return {
+        productList: Object.values(productStats).sort((a, b) => b.qty - a.qty),
+        paymentStats,
+        totalUnitsSold
+      };
+    }
+
+    function deleteOrder(orderId) {
+      const idx = orders.findIndex(o => String(o.id) === String(orderId));
+      if (idx === -1) return;
+      const order = orders[idx];
+
+      if (!confirm(`¿Anular y eliminar la factura ${order.id} de ${order.customer} ($${Number(order.total || 0).toFixed(2)})?
+
+Las prendas de este pedido volverán automáticamente al inventario.`)) {
+        return;
+      }
+
+      const itemsToRestore = parseOrderItems(order);
+      itemsToRestore.forEach(it => {
+        const prod = inventory.find(p => p.code.toUpperCase() === String(it.code).toUpperCase());
+        if (prod && it.size) {
+          prod.sizes[String(it.size)] = (Number(prod.sizes[String(it.size)]) || 0) + Number(it.qty || 1);
+          prod.sold = Math.max(0, (Number(prod.sold) || 0) - Number(it.qty || 1));
+          pushInventoryRowToCloud(prod);
+        }
+      });
+
+      if (order.coupon && order.coupon !== 'Ninguno') {
+        const cObj = coupons.find(c => c.code.toUpperCase() === String(order.coupon).toUpperCase());
+        if (cObj) {
+          cObj.used = false;
+          cObj.usedBy = '';
+        }
+      }
+
+      orders.splice(idx, 1);
+      saveOrders();
+      saveInventory();
+      saveCoupons();
+
+      callSheetsApi({ action: 'delete_order', orderId: order.id, items: itemsToRestore }).catch(() => {});
+
+      renderOrdersTable();
+      renderAdminInventory();
+      renderCouponsTable();
+      renderAnalyticsTab();
+      renderCatalog();
+      renderTop3();
+      showToast(`Factura ${order.id} eliminada y stock reintegrado.`);
+    }
+
     function renderOrdersTable() {
       const filtered = getFilteredOrders();
       const tbody = document.getElementById('admin-orders-tbody');
+      const prodTbody = document.getElementById('admin-sold-products-tbody');
+      const badge = document.getElementById('sold-products-summary-badge');
+
+      const { productList, totalUnitsSold } = buildSoldProductsAggregation(filtered);
+      if (badge) {
+        badge.textContent = `${totalUnitsSold} unidad(es) vendida(s)`;
+      }
+
+      if (prodTbody) {
+        if (productList.length === 0) {
+          prodTbody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-burgundy/65">No hay productos vendidos en este período.</td></tr>`;
+        } else {
+          prodTbody.innerHTML = productList.map(p => `
+            <tr class="hover:bg-butter-light/60">
+              <td class="p-2.5 font-bold text-burgundy">${p.code}</td>
+              <td class="p-2.5 font-medium text-burgundy-dark">${p.description}</td>
+              <td class="p-2.5 text-center">${p.sizes['6']}</td>
+              <td class="p-2.5 text-center">${p.sizes['8']}</td>
+              <td class="p-2.5 text-center">${p.sizes['10']}</td>
+              <td class="p-2.5 text-center">${p.sizes['12']}</td>
+              <td class="p-2.5 text-center">${p.sizes['14']}</td>
+              <td class="p-2.5 text-center font-bold text-burgundy">${p.qty}</td>
+              <td class="p-2.5 text-center text-burgundy/80">${p.remaining}</td>
+              <td class="p-2.5 text-right font-bold text-burgundy">$${p.revenue.toFixed(2)}</td>
+            </tr>
+          `).join('');
+        }
+      }
+
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-burgundy/65">No hay pedidos registrados en este rango de fechas.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-burgundy/65">No hay facturas registradas en este rango de fechas.</td></tr>`;
         return;
       }
       tbody.innerHTML = filtered.map(o => {
@@ -1616,59 +1872,287 @@
           ? o.items.map(i => `${i.qty}x ${i.code} (T${i.size})`).join(', ')
           : (o.items || '');
         return `
-          <tr>
-            <td class="p-3 font-semibold">${o.date}</td>
+          <tr class="hover:bg-butter-light/60">
+            <td class="p-3">
+              <span class="font-bold text-burgundy block">${o.id || 'S/N'}</span>
+              <span class="text-[11px] text-burgundy/70">${o.date}</span>
+            </td>
             <td class="p-3 font-bold text-burgundy">${o.customer}</td>
             <td class="p-3">${itemsText}</td>
             <td class="p-3">${o.payment}</td>
-            <td class="p-3">${o.coupon}</td>
+            <td class="p-3">${o.coupon || 'Ninguno'}</td>
             <td class="p-3 text-right font-bold text-burgundy">$${Number(o.total || 0).toFixed(2)}</td>
+            <td class="p-3 text-center">
+              <button onclick="deleteOrder('${o.id}')" title="Anular y eliminar factura" class="bg-burgundy/10 hover:bg-burgundy text-burgundy hover:text-butter px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer inline-flex items-center gap-1">
+                <i class="fa-solid fa-trash-can"></i> Eliminar
+              </button>
+            </td>
           </tr>
         `;
       }).join('');
+    }
+
+    // Manual Order Modal (for registering past WhatsApp sales)
+    function openManualOrderModal() {
+      document.getElementById('manual-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('manual-customer').value = '';
+      document.getElementById('manual-qty').value = 1;
+      const sel = document.getElementById('manual-code');
+      sel.innerHTML = inventory.map(i => `<option value="${i.code}">${i.code} · ${i.description} ($${i.price})</option>`).join('');
+      document.getElementById('manual-order-modal').classList.remove('hidden');
+    }
+
+    function closeManualOrderModal() {
+      document.getElementById('manual-order-modal').classList.add('hidden');
+    }
+
+    function saveManualOrder() {
+      const date = document.getElementById('manual-date').value || new Date().toISOString().split('T')[0];
+      const customer = (document.getElementById('manual-customer').value || '').trim();
+      const code = document.getElementById('manual-code').value;
+      const size = document.getElementById('manual-size').value;
+      const qty = Math.max(1, parseInt(document.getElementById('manual-qty').value, 10) || 1);
+      const payment = document.getElementById('manual-payment').value;
+      const deduct = document.getElementById('manual-deduct-stock').checked;
+
+      if (!customer) {
+        showToast('Ingresa el nombre de la clienta.');
+        return;
+      }
+
+      const item = inventory.find(i => i.code === code);
+      if (!item) return;
+
+      const subtotal = item.price * qty;
+      if (deduct) {
+        item.sizes[size] = Math.max(0, (Number(item.sizes[size]) || 0) - qty);
+        item.sold = (Number(item.sold) || 0) + qty;
+        pushInventoryRowToCloud(item);
+      }
+
+      const orderRecord = {
+        id: 'BRM-' + Date.now().toString().slice(-6),
+        date,
+        customer,
+        phone: 'WhatsApp',
+        address: 'Caracas',
+        payment,
+        coupon: 'Ninguno',
+        subtotal,
+        discount: 0,
+        total: subtotal,
+        items: [{ code: item.code, description: item.description, size, qty, price: item.price }]
+      };
+
+      orders.unshift(orderRecord);
+      saveOrders();
+      saveInventory();
+      callSheetsApi({ action: 'new_order', order: orderRecord }).catch(() => {});
+
+      closeManualOrderModal();
+      renderOrdersTable();
+      renderAdminInventory();
+      renderAnalyticsTab();
+      renderCatalog();
+      renderTop3();
+      showToast(`Venta ${orderRecord.id} agregada al reporte.`);
+    }
+
+    // Export & Import JSON Backup across devices
+    function exportBackupJSON() {
+      const backup = {
+        exportedAt: new Date().toISOString(),
+        inventory,
+        orders,
+        coupons,
+        analytics
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Respaldo_BRUMA_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Respaldo descargado.');
+    }
+
+    function importBackupJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (Array.isArray(data.inventory)) { inventory = data.inventory; saveInventory(); }
+          if (Array.isArray(data.orders)) { orders = data.orders; saveOrders(); }
+          if (Array.isArray(data.coupons)) { coupons = data.coupons; saveCoupons(); }
+          if (data.analytics) { analytics = data.analytics; saveAnalytics(); }
+          renderAdminInventory();
+          renderCouponsTable();
+          renderAnalyticsTab();
+          renderOrdersTable();
+          renderCatalog();
+          renderTop3();
+          showToast('Respaldo restaurado correctamente.');
+        } catch (err) {
+          showToast('Archivo de respaldo inválido.');
+        }
+      };
+      reader.readAsText(file);
     }
 
     function exportSalesPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       const filtered = getFilteredOrders();
+      const start = document.getElementById('report-start-date').value || 'Inicio';
+      const end = document.getElementById('report-end-date').value || 'Hoy';
       const totalSum = filtered.reduce((s, o) => s + Number(o.total || 0), 0);
+      const { productList, paymentStats, totalUnitsSold } = buildSoldProductsAggregation(filtered);
 
-      doc.setFillColor(92, 10, 30);
-      doc.rect(0, 0, 210, 32, 'F');
-      doc.setTextColor(253, 243, 199);
-      doc.setFontSize(20);
-      doc.text('BRUMA (@bruma_ccs) · Reporte de Ventas', 14, 20);
-
-      doc.setTextColor(64, 6, 20);
-      doc.setFontSize(11);
-      doc.text(`Fecha de emisión: ${new Date().toLocaleDateString('es-VE')}`, 14, 42);
-      doc.text(`Pedidos en reporte: ${filtered.length} | Ingresos Totales: $${totalSum.toFixed(2)}`, 14, 49);
-
-      let y = 62;
-      doc.setFontSize(9);
+      // Header Banner
+      doc.setFillColor(122, 30, 58);
+      doc.rect(0, 0, 210, 34, 'F');
+      doc.setTextColor(242, 232, 183);
+      doc.setFontSize(18);
       doc.setFont(undefined, 'bold');
-      doc.text('FECHA', 14, y);
-      doc.text('CLIENTE', 40, y);
-      doc.text('MÉTODO PAGO', 95, y);
-      doc.text('CUPÓN', 140, y);
-      doc.text('TOTAL', 175, y);
-      doc.line(14, y + 2, 196, y + 2);
-      y += 8;
+      doc.text('BRUMA (@bruma_ccs) · Reporte de Ventas y Productos', 14, 16);
+      doc.setFontSize(9.5);
+      doc.setFont(undefined, 'normal');
+      doc.text(`Período: ${start} al ${end}   |   Emitido: ${new Date().toLocaleDateString('es-VE')}`, 14, 25);
+
+      // Executive Summary Strip
+      doc.setFillColor(249, 243, 214);
+      doc.roundedRect(14, 40, 182, 16, 2, 2, 'F');
+      doc.setTextColor(86, 18, 39);
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'bold');
+      doc.text(`Facturas Activas: ${filtered.length}`, 20, 50);
+      doc.text(`Prendas Vendidas: ${totalUnitsSold} unid.`, 78, 50);
+      doc.text(`Ingresos Netos: $${totalSum.toFixed(2)}`, 142, 50);
+
+      // SECTION 1: PRODUCTOS VENDIDOS POR REFERENCIA Y TALLA
+      let y = 66;
+      doc.setFontSize(11.5);
+      doc.setTextColor(122, 30, 58);
+      doc.text('1. Resumen de Productos Vendidos (por Referencia y Talla)', 14, y);
+      y += 5;
+
+      doc.setFillColor(122, 30, 58);
+      doc.rect(14, y, 182, 7, 'F');
+      doc.setTextColor(242, 232, 183);
+      doc.setFontSize(7.8);
+      doc.text('CÓDIGO', 16, y + 5);
+      doc.text('DESCRIPCIÓN', 39, y + 5);
+      doc.text('T6', 102, y + 5);
+      doc.text('T8', 111, y + 5);
+      doc.text('T10', 120, y + 5);
+      doc.text('T12', 130, y + 5);
+      doc.text('T14', 140, y + 5);
+      doc.text('VEND.', 151, y + 5);
+      doc.text('STOCK', 164, y + 5);
+      doc.text('TOTAL ($)', 179, y + 5);
+      y += 11;
+
+      doc.setTextColor(86, 18, 39);
+      doc.setFont(undefined, 'normal');
+
+      if (productList.length === 0) {
+        doc.text('Sin productos vendidos en el rango seleccionado.', 16, y);
+        y += 8;
+      } else {
+        productList.forEach((p, idx) => {
+          if (y > 272) { doc.addPage(); y = 20; }
+          if (idx % 2 === 1) {
+            doc.setFillColor(249, 243, 214);
+            doc.rect(14, y - 4, 182, 6.5, 'F');
+          }
+          doc.setFont(undefined, 'bold');
+          doc.text(p.code, 16, y);
+          doc.setFont(undefined, 'normal');
+          doc.text(String(p.description || '').slice(0, 32), 39, y);
+          doc.text(String(p.sizes['6']), 103, y);
+          doc.text(String(p.sizes['8']), 112, y);
+          doc.text(String(p.sizes['10']), 121, y);
+          doc.text(String(p.sizes['12']), 131, y);
+          doc.text(String(p.sizes['14']), 141, y);
+          doc.setFont(undefined, 'bold');
+          doc.text(String(p.qty), 153, y);
+          doc.setFont(undefined, 'normal');
+          doc.text(String(p.remaining), 166, y);
+          doc.setFont(undefined, 'bold');
+          doc.text(`$${p.revenue.toFixed(2)}`, 179, y);
+          doc.setFont(undefined, 'normal');
+          y += 6.8;
+        });
+      }
+
+      // SECTION 2: CIERRE POR MÉTODO DE PAGO
+      y += 6;
+      if (y > 250) { doc.addPage(); y = 20; }
+      doc.setFontSize(11.5);
+      doc.setFont(undefined, 'bold');
+      doc.setTextColor(122, 30, 58);
+      doc.text('2. Cierre por Método de Pago', 14, y);
+      y += 6;
+      doc.setFontSize(9);
+      doc.setTextColor(86, 18, 39);
+      const payEntries = Object.entries(paymentStats);
+      if (payEntries.length === 0) {
+        doc.setFont(undefined, 'normal');
+        doc.text('Sin movimientos registrados.', 16, y);
+        y += 7;
+      } else {
+        payEntries.forEach(([method, amount]) => {
+          doc.setFont(undefined, 'normal');
+          doc.text(`• ${method}:`, 16, y);
+          doc.setFont(undefined, 'bold');
+          doc.text(`$${Number(amount).toFixed(2)}`, 75, y);
+          y += 6;
+        });
+      }
+
+      // SECTION 3: DETALLE DE FACTURAS
+      y += 6;
+      if (y > 245) { doc.addPage(); y = 20; }
+      doc.setFontSize(11.5);
+      doc.setFont(undefined, 'bold');
+      doc.setTextColor(122, 30, 58);
+      doc.text('3. Detalle Cronológico de Facturas', 14, y);
+      y += 5;
+
+      doc.setFillColor(122, 30, 58);
+      doc.rect(14, y, 182, 7, 'F');
+      doc.setTextColor(242, 232, 183);
+      doc.setFontSize(7.8);
+      doc.text('FACTURA / FECHA', 16, y + 5);
+      doc.text('CLIENTA', 52, y + 5);
+      doc.text('PRENDAS', 92, y + 5);
+      doc.text('MÉTODO PAGO', 148, y + 5);
+      doc.text('TOTAL', 180, y + 5);
+      y += 11;
+
+      doc.setTextColor(86, 18, 39);
       doc.setFont(undefined, 'normal');
 
       filtered.forEach(o => {
         if (y > 275) { doc.addPage(); y = 20; }
-        doc.text(String(o.date || ''), 14, y);
-        doc.text(String(o.customer || '').slice(0, 26), 40, y);
-        doc.text(String(o.payment || '').slice(0, 20), 95, y);
-        doc.text(String(o.coupon || ''), 140, y);
-        doc.text(`$${Number(o.total || 0).toFixed(2)}`, 175, y);
-        y += 7;
+        const itemsText = Array.isArray(o.items)
+          ? o.items.map(i => `${i.qty}x ${i.code}(T${i.size})`).join(', ')
+          : String(o.items || '');
+        doc.text(`${o.id || ''} (${o.date || ''})`, 16, y);
+        doc.text(String(o.customer || '').slice(0, 20), 52, y);
+        doc.text(itemsText.slice(0, 30), 92, y);
+        doc.text(String(o.payment || '').slice(0, 17), 148, y);
+        doc.setFont(undefined, 'bold');
+        doc.text(`$${Number(o.total || 0).toFixed(2)}`, 180, y);
+        doc.setFont(undefined, 'normal');
+        y += 6.8;
       });
 
-      doc.save(`Reporte_Ventas_BRUMA_${new Date().toISOString().split('T')[0]}.pdf`);
-      showToast('Reporte PDF descargado.');
+      doc.save(`Reporte_Productos_Ventas_BRUMA_${new Date().toISOString().split('T')[0]}.pdf`);
+      showToast('Reporte PDF completo descargado.');
     }
 
     // =========================================================================
