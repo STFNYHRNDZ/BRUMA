@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Evita bloqueos de Google Drive CDN por cabecera Referer en GitHub Pages o local -->
   <meta name="referrer" content="no-referrer">
+  <!-- Google Tag Manager (GTM-5XZ4WL94) -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5XZ4WL94');</script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script>
+  <!-- End Google Tag Manager -->
   <title>BRUMA · Colección Exclusiva (@bruma_ccs)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -45,6 +57,10 @@
   </style>
 </head>
 <body class="bg-butter text-burgundy-dark antialiased min-h-screen flex flex-col justify-between selection:bg-burgundy selection:text-butter">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5XZ4WL94"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
 
   <!-- Top Announcement Bar -->
   <div class="bg-burgundy text-butter text-[11px] sm:text-xs tracking-widest text-center py-2.5 px-4 font-medium uppercase border-b border-burgundy-light flex items-center justify-center gap-3 flex-wrap">
@@ -913,6 +929,18 @@
     }
 
     // =========================================================================
+    // 0B. GOOGLE TAG MANAGER & META PIXEL E-COMMERCE DATALAYER EVENTS
+    // =========================================================================
+    function pushGtmEvent(eventName, params = {}) {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: eventName,
+        currency: 'USD',
+        ...params
+      });
+    }
+
+    // =========================================================================
     // 1. REAL GOOGLE DRIVE PUBLIC FOLDER MAPPING ("BRUMA FOTOS" / "bruma store")
     // =========================================================================
     const DRIVE_PHOTO_IDS = {
@@ -1063,6 +1091,9 @@
     function trackEvent(key) {
       analytics[key] = (analytics[key] || 0) + 1;
       saveAnalytics();
+      if (key === 'whatsappClicks' || key === 'instagramClicks') {
+        pushGtmEvent('Contact', { contact_channel: key === 'whatsappClicks' ? 'WhatsApp' : 'Instagram' });
+      }
     }
 
     function showToast(msg) {
@@ -1318,7 +1349,7 @@
     }
 
     // =========================================================================
-    // 5. FULLSCREEN LIGHTBOX
+    // 5. FULLSCREEN LIGHTBOX (Fires ViewContent to GTM / Meta Pixel)
     // =========================================================================
     function openLightbox(code, idx) {
       const photos = photoMap[code] || [];
@@ -1326,6 +1357,16 @@
       lightboxState = { code, index: idx };
       updateLightboxView();
       document.getElementById('lightbox-modal').classList.remove('hidden');
+      const item = inventory.find(p => p.code === code);
+      if (item) {
+        pushGtmEvent('ViewContent', {
+          content_ids: [item.code],
+          content_name: item.description,
+          content_category: item.category,
+          content_type: 'product',
+          value: Number(item.price) || 0
+        });
+      }
     }
 
     function closeLightbox() {
@@ -1512,13 +1553,23 @@
     }
 
     // =========================================================================
-    // 7. SHOPPING BAG, VIP COUPONS & WHATSAPP CHECKOUT (CLOUD-SYNCED)
+    // 7. SHOPPING BAG, VIP COUPONS & WHATSAPP CHECKOUT (GTM + META PIXEL EVENTS)
     // =========================================================================
     function toggleCart(forceOpen) {
       const drawer = document.getElementById('cart-drawer');
+      const wasHidden = drawer.classList.contains('hidden');
       if (forceOpen === true) drawer.classList.remove('hidden');
       else if (forceOpen === false) drawer.classList.add('hidden');
       else drawer.classList.toggle('hidden');
+      const isNowOpen = !drawer.classList.contains('hidden');
+      if (wasHidden && isNowOpen && cart.length > 0) {
+        const { total } = computeTotals();
+        pushGtmEvent('InitiateCheckout', {
+          content_ids: cart.map(c => c.code),
+          num_items: cart.reduce((s, c) => s + c.qty, 0),
+          value: Number(total.toFixed(2))
+        });
+      }
       renderCart();
     }
 
@@ -1540,6 +1591,16 @@
 
       if (existing) existing.qty += 1;
       else cart.push({ code, size, qty: 1 });
+
+      pushGtmEvent('AddToCart', {
+        content_ids: [item.code],
+        content_name: item.description,
+        content_category: item.category,
+        content_type: 'product',
+        size: size,
+        quantity: 1,
+        value: Number(item.price) || 0
+      });
 
       updateCartBadge();
       if (!silent) showToast(`${item.description} (Talla ${size}) agregada.`);
@@ -1742,6 +1803,16 @@
       saveCoupons();
       saveOrders();
       trackEvent('whatsappClicks');
+
+      pushGtmEvent('Purchase', {
+        transaction_id: orderRecord.id,
+        content_ids: orderItems.map(i => i.code),
+        contents: orderItems.map(i => ({ id: i.code, quantity: i.qty, item_price: i.price, size: i.size })),
+        num_items: orderItems.reduce((s, i) => s + i.qty, 0),
+        payment_method: payment,
+        coupon: appliedCode,
+        value: Number(total.toFixed(2))
+      });
 
       try {
         await callSheetsApi({
